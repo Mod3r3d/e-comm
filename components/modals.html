@@ -1,0 +1,101 @@
+<!-- ==========================================================================
+     MODALS & DRAWERS COMPONENT
+     ========================================================================== -->
+<!-- Product Detail Modal (PDP) -->
+<div id="product-detail-modal" class="modal-overlay">
+  <div class="modal-card">
+    <div id="pdp-modal-content"></div>
+  </div>
+</div>
+
+<!-- Cart Drawer -->
+<div id="cart-drawer-overlay" class="cart-drawer-overlay" onclick="closeCartDrawer()"></div>
+<div id="cart-drawer" class="cart-drawer">
+  <div class="cart-drawer-header">
+    <span class="cart-drawer-title">
+      <i class="hgi-stroke hgi-shopping-bag-02"></i>
+      <span>GIỎ HÀNG CỦA BẠN</span>
+    </span>
+    <button class="cart-drawer-close" onclick="closeCartDrawer()" title="Đóng giỏ hàng">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div id="cart-drawer-items-list" class="cart-drawer-items"></div>
+  <div class="cart-drawer-footer">
+    <div class="cart-summary-line">
+      <span>Tổng phụ:</span>
+      <strong id="drawer-subtotal-val">0₫</strong>
+    </div>
+    <div class="coupon-input-group">
+      <input type="text" id="coupon-code-input" class="coupon-input" placeholder="Mã giảm giá (WOODLUXE10)..." />
+      <button class="btn-apply-coupon" onclick="applyCouponCode()">
+        <i class="fa-solid fa-ticket"></i>
+        <span>ÁP DỤNG</span>
+      </button>
+    </div>
+    <div class="cart-summary-line cart-summary-total">
+      <span>Tổng cộng:</span>
+      <strong id="drawer-total-val" style="color: var(--color-accent-amber);">0₫</strong>
+    </div>
+    <a href="checkout.html" class="btn-checkout-drawer">
+      <i class="fa-solid fa-shield-halved"></i>
+      <span>TIẾN HÀNH THANH TOÁN</span>
+    </a>
+  </div>
+</div>
+
+<!-- Order Success Modal -->
+<div id="order-success-modal" class="modal-overlay">
+  <div class="modal-card" style="max-width: 520px; padding: 20px;">
+    <div id="order-success-details"></div>
+  </div>
+</div>
+
+<!-- Blog Reader Modal -->
+<div id="blog-reader-modal" class="modal-overlay">
+  <div class="modal-card" style="max-width: 780px;">
+    <button class="modal-close-btn" onclick="closeBlogModal()" title="Đóng">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div id="blog-reader-content"></div>
+  </div>
+</div>
+
+<!-- Harness Test Runner Modal -->
+<div id="test-runner-modal" class="modal-overlay">
+  <div class="modal-card test-modal-card">
+    <button class="modal-close-btn" onclick="closeTestRunnerModal()" title="Đóng">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <h2 style="font-size: 20px; font-weight: 800; color: var(--color-primary-navy); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-bolt" style="color: var(--color-accent-amber);"></i>
+      <span>BỘ KIỂM THỬ CHẤT LƯỢNG HỆ THỐNG (20 TEST CASES)</span>
+    </h2>
+    <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 16px;">Tự động kiểm chứng toàn bộ 20 kịch bản kiểm thử quy định trong đề bài và kế hoạch triển khai.</p>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+      <button class="btn-primary" onclick="runAllAcceptanceTests()">
+        <i class="fa-solid fa-circle-play"></i>
+        <span>CHẠY KIỂM THỬ TỰ ĐỘNG</span>
+      </button>
+      <span id="test-runner-progress" style="font-size: 13px; font-weight: 700;">Nhấn nút để chạy kiểm thử...</span>
+    </div>
+
+    <div style="max-height: 400px; overflow-y: auto;">
+      <table class="test-results-table">
+        <thead>
+          <tr>
+            <th style="width: 70px;">Mã TC</th>
+            <th>Kịch bản Kiểm thử</th>
+            <th style="width: 90px;">Kết quả</th>
+            <th>Chi tiết</th>
+          </tr>
+        </thead>
+        <tbody id="test-runner-tbody">
+          <!-- Test results dynamically inserted -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,171 @@
+/* ==========================================================================
+   WOODLUXE DESIGN SYSTEM — CHECKOUT PORTAL
+   ========================================================================== */
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 36px;
+}
+.checkout-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 28px;
+}
+.checkout-card h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-primary-navy);
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.checkout-card h3 i {
+  color: var(--color-accent-amber);
+}
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin-bottom: 6px;
+}
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: var(--transition-smooth);
+}
+.form-control:focus {
+  border-color: var(--color-accent-amber);
+  box-shadow: 0 0 0 3px rgba(244, 165, 29, 0.15);
+}
+.form-control.error {
+  border-color: var(--color-sale-red);
+  background-color: #fef2f2;
+}
+
+.payment-method-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.payment-method-card.selected {
+  border-color: var(--color-accent-amber);
+  background-color: #fffaf0;
+}
+.payment-method-card i {
+  font-size: 18px;
+  color: var(--color-accent-amber);
+  margin-top: 2px;
+}
+
+
+/* ==========================================================================
+   ORDER TRACKING TIMELINE & MODAL STYLES
+   ========================================================================== */
+.tracking-stepper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  margin: 28px 0 24px;
+}
+.tracking-stepper::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 36px;
+  right: 36px;
+  height: 3px;
+  background: #e2e8f0;
+  z-index: 1;
+}
+.tracking-step {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  flex: 1;
+}
+.tracking-step-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #cbd5e1;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+.tracking-step.completed .tracking-step-icon {
+  background: var(--color-success-green);
+  border-color: var(--color-success-green);
+  color: #ffffff;
+}
+.tracking-step.active .tracking-step-icon {
+  background: var(--color-accent-amber);
+  border-color: var(--color-accent-amber);
+  color: var(--color-primary-navy);
+  box-shadow: 0 0 0 4px rgba(244, 165, 29, 0.25);
+  animation: pulseAmber 2s infinite;
+}
+@keyframes pulseAmber {
+  0% { box-shadow: 0 0 0 0 rgba(244, 165, 29, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(244, 165, 29, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(244, 165, 29, 0); }
+}
+.tracking-step-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 4px;
+}
+.tracking-step.completed .tracking-step-title {
+  color: var(--color-success-green);
+}
+.tracking-step.active .tracking-step-title {
+  color: var(--color-accent-amber);
+}
+.tracking-step-desc {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  padding: 0 6px;
+}
+.top-notice-track-btn:hover {
+  color: var(--color-accent-amber) !important;
+}
+.quick-pill-btn {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary-navy);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.quick-pill-btn:hover {
+  border-color: var(--color-accent-amber);
+  color: var(--color-accent-amber);
+  background: #fffaf0;
+}

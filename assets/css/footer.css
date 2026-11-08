@@ -1,0 +1,134 @@
+/* ==========================================================================
+   WOODLUXE DESIGN SYSTEM — FOOTER
+   ========================================================================== */
+
+.main-footer {
+  background: var(--color-primary-navy-dark);
+  color: #d1d5db;
+  padding: 60px 0 24px;
+  border-top: 3px solid var(--color-accent-amber);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+  gap: 36px;
+  margin-bottom: 48px;
+}
+.footer-col h4 {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.footer-col h4 i {
+  color: var(--color-accent-amber);
+  font-size: 14px;
+}
+.footer-col p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #9ca3af;
+  margin-bottom: 14px;
+}
+.footer-social-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+.footer-social-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #162844;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: var(--transition-smooth);
+}
+.footer-social-btn:hover {
+  background: var(--color-accent-amber);
+  color: var(--color-primary-navy);
+  transform: translateY(-2px);
+}
+.footer-links {
+  list-style: none;
+}
+.footer-links li {
+  margin-bottom: 10px;
+}
+.footer-links a {
+  font-size: 13px;
+  color: #9ca3af;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.footer-links a:hover {
+  color: var(--color-accent-amber);
+  padding-left: 4px;
+}
+.footer-bottom {
+  border-top: 1px solid var(--color-border-dark);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #6b7280;
+}
+.footer-bottom-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #a0aec0;
+}
+.footer-bottom-badge i {
+  color: var(--color-accent-amber);
+}
+
+/* ==========================================================================
+   SCROLL TO TOP FLOATING BUTTON
+   ========================================================================== */
+.woodluxe-scroll-top {
+  position: fixed;
+  bottom: 26px;
+  right: 26px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--color-primary-navy, #0c192c);
+  color: var(--color-accent-amber, #eab308);
+  border: 1.5px solid var(--color-accent-amber, #eab308);
+  box-shadow: 0 8px 24px rgba(12, 25, 44, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px) scale(0.9);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.woodluxe-scroll-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.woodluxe-scroll-top:hover {
+  background: var(--color-accent-amber, #eab308);
+  color: var(--color-primary-navy, #0c192c);
+  box-shadow: 0 12px 30px rgba(234, 179, 8, 0.45);
+  transform: translateY(-4px) scale(1.06);
+}
+

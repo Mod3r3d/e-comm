@@ -1,0 +1,36 @@
+<!-- ==========================================================================
+     PRODUCT DETAIL PAGE (PDP) VIEW COMPONENT
+     ========================================================================== -->
+<div class="container" style="padding: 40px 0 80px;">
+  <!-- Breadcrumb -->
+  <div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 24px;">
+    <a href="index.html"><i class="fa-solid fa-house" style="margin-right: 4px;"></i>Trang chủ</a> / 
+    <a href="shop.html">Cửa hàng</a> / 
+    <span id="pdp-page-breadcrumb-cat">Danh mục</span> / 
+    <strong id="pdp-page-breadcrumb-title">Tên sản phẩm</strong>
+  </div>
+
+  <!-- Standalone PDP Wrapper -->
+  <div class="pdp-standalone-wrapper">
+    <div id="pdp-standalone-container">
+      <!-- Dynamically rendered by renderStandalonePDP() -->
+    </div>
+  </div>
+
+  <!-- Related Products Section -->
+  <div style="margin-top: 60px;">
+    <div class="section-header">
+      <h2 class="section-title">
+        <i class="fa-solid fa-shapes"></i>
+        <span>SẢN PHẨM CÙNG DANH MỤC LIÊN QUAN</span>
+      </h2>
+      <a href="shop.html" style="font-size: 13px; font-weight: 700; color: var(--color-accent-amber); display: inline-flex; align-items: center; gap: 6px;">
+        <span>Xem tất cả</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+    <div id="pdp-related-products-grid" class="shop-products-grid" style="grid-template-columns: repeat(4, 1fr);">
+      <!-- Dynamically rendered by renderPdpRelatedProducts() -->
+    </div>
+  </div>
+</div>

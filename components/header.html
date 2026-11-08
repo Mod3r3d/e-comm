@@ -1,0 +1,115 @@
+<!-- ================= TOP NOTICE BAR ================= -->
+<div class="top-notice-bar">
+  <div class="container">
+    <div class="top-notice-left">
+      <span><i class="fa-solid fa-phone-volume"></i> Hotline tư vấn: <strong>1900 6868</strong></span>
+      <span><i class="fa-solid fa-location-dot"></i> Showroom: <strong>Quận 1, TP. Hồ Chí Minh</strong></span>
+      <span><i class="fa-solid fa-truck-fast"></i> Giao hàng & Lắp đặt miễn phí đơn từ 10.000.000₫</span>
+    </div>
+    <div class="top-notice-right">
+      <div style="display: flex; align-items: center; gap: 4px;">
+        <i class="fa-solid fa-coins" style="color: var(--color-accent-amber);"></i>
+        <select id="currency-selector" onchange="alert('Hệ thống hiện cố định giá hiển thị chuẩn VNĐ.')">
+          <option value="VND">VNĐ (Việt Nam)</option>
+          <option value="USD">USD ($)</option>
+        </select>
+      </div>
+      <span><i class="fa-solid fa-headset"></i> Hỗ trợ khách hàng</span>
+      <span><i class="fa-solid fa-box-open"></i> Theo dõi đơn hàng</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MAIN HEADER (WoodMart Layout) ================= -->
+<header class="main-header">
+  <div class="container">
+    <div class="header-wrapper">
+      <!-- Brand Logo with Hugeicons Sofa -->
+      <a href="index.html" class="brand-logo">
+        <div class="logo-icon">
+          <i class="hgi-stroke hgi-sofa-01"></i>
+        </div>
+        <div>
+          WOODLUXE
+          <span class="brand-tagline">INTERNATIONAL LIVING</span>
+        </div>
+      </a>
+
+      <!-- Search Bar with Category Select & Hugeicons Search -->
+      <div class="header-search-container">
+        <form class="search-form" onsubmit="event.preventDefault(); handleLiveSearch(document.getElementById('header-search-input').value);">
+          <input type="text" id="header-search-input" class="search-input" placeholder="Tìm kiếm sản phẩm nội thất (vd: sofa, chair, bed, lamp)..." autocomplete="off" />
+          <!-- Custom Themed Search Category Dropdown -->
+          <div class="search-category-picker" id="search-category-picker">
+            <input type="hidden" id="search-category-filter" value="all" />
+            <button type="button" class="search-category-current" id="search-category-current-btn" onclick="toggleSearchCategoryMenu(event)" title="Chọn danh mục">
+              <span id="search-category-current-label">Tất cả danh mục</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="search-category-menu" id="search-category-menu">
+              <div class="search-category-option active" data-cat="all" onclick="selectSearchCategory('all', 'Tất cả danh mục')">
+                <i class="fa-solid fa-border-all"></i>
+                <span>Tất cả danh mục</span>
+              </div>
+              <div class="search-category-option" data-cat="Sofas" onclick="selectSearchCategory('Sofas', 'Sofas')">
+                <i class="fa-solid fa-couch"></i>
+                <span>Sofas</span>
+              </div>
+              <div class="search-category-option" data-cat="Chairs" onclick="selectSearchCategory('Chairs', 'Chairs')">
+                <i class="fa-solid fa-chair"></i>
+                <span>Chairs</span>
+              </div>
+              <div class="search-category-option" data-cat="Tables" onclick="selectSearchCategory('Tables', 'Tables')">
+                <i class="fa-solid fa-table"></i>
+                <span>Tables</span>
+              </div>
+              <div class="search-category-option" data-cat="Beds" onclick="selectSearchCategory('Beds', 'Beds')">
+                <i class="fa-solid fa-bed"></i>
+                <span>Beds</span>
+              </div>
+              <div class="search-category-option" data-cat="Lighting" onclick="selectSearchCategory('Lighting', 'Lighting')">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span>Lighting</span>
+              </div>
+              <div class="search-category-option" data-cat="Decoration" onclick="selectSearchCategory('Decoration', 'Decoration')">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span>Decoration</span>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="search-submit-btn" title="Tìm kiếm">
+            <i class="hgi-stroke hgi-search-01"></i>
+          </button>
+        </form>
+        <!-- Autocomplete Dropdown -->
+        <div id="live-search-dropdown" class="live-search-results"></div>
+      </div>
+
+      <!-- Header Actions: Account, Wishlist, Cart with Hugeicons -->
+      <div class="header-actions">
+        <a href="account.html" class="action-item">
+          <i class="hgi-stroke hgi-user"></i>
+          <span>Tài khoản</span>
+        </a>
+
+        <a href="wishlist.html" class="action-item">
+          <div class="action-icon-wrap">
+            <i class="hgi-stroke hgi-favourite"></i>
+            <span id="header-wishlist-count" class="badge-count">0</span>
+          </div>
+          <span>Yêu thích</span>
+        </a>
+
+        <div class="action-item" onclick="openCartDrawer()">
+          <div class="action-icon-wrap">
+            <i class="hgi-stroke hgi-shopping-bag-02"></i>
+            <span id="header-cart-count" class="badge-count">0</span>
+          </div>
+          <div>
+            <span class="cart-total-text" id="header-cart-total-price">0₫</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

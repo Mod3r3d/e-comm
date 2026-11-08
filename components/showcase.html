@@ -1,0 +1,56 @@
+<!-- TWO-COLUMN SHOWCASE: SALE PRODUCTS & SPECIAL OFFERS -->
+<section class="section-wrapper" style="background: #ffffff; padding: 50px 0;">
+  <div class="container">
+    <div class="two-col-showcase">
+      <!-- Left Column: Sale Products Spotlight -->
+      <div class="sale-spotlight-box">
+        <div class="sale-box-header">
+          <span class="sale-box-title">
+            <i class="fa-solid fa-tags"></i>
+            <span>ƯU ĐÃI ĐỘC QUYỀN TRONG NGÀY</span>
+          </span>
+          <span class="badge badge-sale">GIÁ TỐT NHẤT</span>
+        </div>
+        <!-- Live Countdown Timer -->
+        <div class="sale-countdown">
+          <div class="countdown-unit">
+            <div id="deal-hours" class="countdown-num">14</div>
+            <div class="countdown-label"><i class="fa-solid fa-clock" style="font-size: 8px;"></i> Giờ</div>
+          </div>
+          <div class="countdown-unit">
+            <div id="deal-mins" class="countdown-num">35</div>
+            <div class="countdown-label">Phút</div>
+          </div>
+          <div class="countdown-unit">
+            <div id="deal-secs" class="countdown-num">42</div>
+            <div class="countdown-label">Giây</div>
+          </div>
+        </div>
+        <!-- Spotlight Content -->
+        <div id="sale-spotlight-content" style="flex: 1; display: flex; flex-direction: column;">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Right Column: Special Offers Tabs -->
+      <div class="tabbed-showcase-box">
+        <div class="showcase-tabs-header">
+          <div class="tab-buttons-group">
+            <span class="sale-box-title" style="margin-right: 12px;">
+              <i class="fa-solid fa-fire"></i> BỘ SƯU TẬP NỔI BẬT
+            </span>
+            <button class="tab-btn" data-tab="new" onclick="switchSpecialTab('new')">MỚI NHẤT</button>
+            <button class="tab-btn active" data-tab="featured" onclick="switchSpecialTab('featured')">NỔI BẬT</button>
+            <button class="tab-btn" data-tab="top" onclick="switchSpecialTab('top')">BÁN CHẠY NHẤT</button>
+          </div>
+          <div style="font-size: 16px; color: var(--color-text-muted); cursor: pointer;" onclick="renderSpecialOffersGrid(APP_STATE.activeSpecialTab)" title="Làm mới">
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </div>
+        </div>
+        <div id="special-offers-grid" class="special-products-grid">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

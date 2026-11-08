@@ -1,0 +1,77 @@
+# ==============================================================================
+# WOODLUXE E-COMMERCE - PRODUCTION APACHE / INFINITYFREE CONFIGURATION
+# ==============================================================================
+
+# 1. Default Index File
+DirectoryIndex index.php index.html
+
+# 2. Character Encoding (UTF-8)
+AddDefaultCharset UTF-8
+AddCharset UTF-8 .html .css .js .json .xml
+
+# 3. Disable Directory Browsing (Security)
+Options -Indexes
+
+# 4. Protect Sensitive Files & Directories
+<FilesMatch "(^\.|\.sql$|\.csv$|\.bat$|\.zip$|\.md$|composer\.)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevent access to database and docs directories directly via browser
+RedirectMatch 403 ^/database/.*\.sql$
+RedirectMatch 403 ^/docs/.*$
+RedirectMatch 403 ^/scratch/.*$
+
+# 5. MIME Types Configuration
+<IfModule mod_mime.c>
+    AddType text/html .html .htm
+    AddType text/css .css
+    AddType application/javascript .js
+    AddType application/json .json
+    AddType image/svg+xml .svg .svgz
+    AddType image/webp .webp
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png .png
+    AddType font/woff2 .woff2
+    AddType font/woff .woff
+</IfModule>
+
+# 6. GZIP / Deflate Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# 7. Browser Caching (Expires Headers)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    
+    # CSS & JavaScript
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    
+    # Images & Media
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # HTML (Keep fresh)
+    ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# 8. Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+

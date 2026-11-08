@@ -1,0 +1,104 @@
+<!-- ==========================================================================
+     CHECKOUT VIEW COMPONENT
+     ========================================================================== -->
+<div class="container" style="padding: 40px 0 80px;">
+  <!-- Breadcrumb -->
+  <div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 20px;">
+    <a href="index.html"><i class="fa-solid fa-house" style="margin-right: 4px;"></i>Trang chủ</a> / 
+    <a href="shop.html">Cửa hàng</a> / 
+    <strong>Thanh toán</strong>
+  </div>
+
+  <h2 style="font-size: 26px; font-weight: 800; color: var(--color-primary-navy); margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
+    <i class="fa-solid fa-credit-card" style="color: var(--color-accent-amber);"></i>
+    <span>XÁC NHẬN ĐƠN HÀNG & THANH TOÁN</span>
+  </h2>
+
+  <div class="checkout-grid">
+    <!-- Billing Details Form -->
+    <div class="checkout-card">
+      <h3>
+        <i class="fa-solid fa-truck-ramp-box"></i>
+        <span>Thông tin giao hàng</span>
+      </h3>
+      <form id="checkout-form" onsubmit="submitCheckoutOrder(event)">
+        <div class="form-group">
+          <label>Họ và tên người nhận *</label>
+          <input type="text" id="checkout-name" class="form-control" placeholder="Nguyễn Văn A" required />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label>Số điện thoại *</label>
+            <input type="tel" id="checkout-phone" class="form-control" placeholder="0901 234 567" required />
+          </div>
+          <div class="form-group">
+            <label>Địa chỉ Email *</label>
+            <input type="email" id="checkout-email" class="form-control" placeholder="khachhang@example.com" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Địa chỉ giao hàng chi tiết *</label>
+          <textarea id="checkout-address" class="form-control" rows="3" placeholder="Số nhà, tên đường, Phường/Xã, Quận/Huyện, Tỉnh/Thành phố" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Ghi chú đơn hàng (Tùy chọn)</label>
+          <textarea class="form-control" rows="2" placeholder="Thời gian giao thuận tiện, hướng dẫn chỉ đường..."></textarea>
+        </div>
+
+        <!-- Payment Methods -->
+        <h3 style="margin-top: 30px;">
+          <i class="fa-solid fa-wallet"></i>
+          <span>Phương thức thanh toán</span>
+        </h3>
+        <label class="payment-method-card selected">
+          <input type="radio" name="payment_method" value="COD" checked />
+          <i class="fa-solid fa-money-bill-transfer"></i>
+          <div>
+            <strong>Thanh toán khi nhận hàng (COD)</strong>
+            <p style="font-size: 12px; color: var(--color-text-muted);">Quý khách thanh toán tiền mặt trực tiếp cho nhân viên giao hàng sau khi kiểm tra nội thất.</p>
+          </div>
+        </label>
+        <label class="payment-method-card">
+          <input type="radio" name="payment_method" value="BANK_TRANSFER" />
+          <i class="fa-solid fa-building-columns"></i>
+          <div>
+            <strong>Chuyển khoản Ngân hàng (Thử nghiệm)</strong>
+            <p style="font-size: 12px; color: var(--color-text-muted);">Ngân hàng Vietcombank • STK: 9988776655 • Chủ TK: CTY WOODLUXE VIETNAM.</p>
+          </div>
+        </label>
+
+        <button type="submit" class="btn-checkout-drawer" style="margin-top: 20px;">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>ĐẶT HÀNG NGAY</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="checkout-card" style="height: fit-content;">
+      <h3>
+        <i class="fa-solid fa-receipt"></i>
+        <span>Đơn hàng của bạn</span>
+      </h3>
+      <div id="checkout-items-summary" style="margin-bottom: 20px;"></div>
+      <div class="cart-summary-line">
+        <span>Tổng phụ (Subtotal)</span>
+        <strong id="checkout-subtotal">0₫</strong>
+      </div>
+      <div class="cart-summary-line">
+        <span>Giảm giá (Coupon)</span>
+        <span id="checkout-discount" style="color: var(--color-sale-red);">0₫</span>
+      </div>
+      <div class="cart-summary-line">
+        <span>Phí giao hàng & lắp đặt</span>
+        <strong style="color: var(--color-success-green); display: inline-flex; align-items: center; gap: 4px;">
+          <i class="fa-solid fa-circle-check"></i> Miễn phí
+        </strong>
+      </div>
+      <div class="cart-summary-line cart-summary-total">
+        <span>Tổng thanh toán</span>
+        <span id="checkout-total" style="color: var(--color-accent-amber);">0₫</span>
+      </div>
+    </div>
+  </div>
+</div>

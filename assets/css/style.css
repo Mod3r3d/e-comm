@@ -1,0 +1,24 @@
+/* ==========================================================================
+   WOODLUXE E-COMMERCE DESIGN SYSTEM — MASTER AGGREGATOR
+   Split into modular component stylesheets
+   ========================================================================== */
+
+@import url('variables.css?v=1.3');
+@import url('base.css?v=1.3');
+@import url('header.css?v=1.3');
+@import url('navigation.css?v=1.3');
+@import url('hero.css?v=1.3');
+@import url('categories.css?v=1.3');
+@import url('showcase.css?v=1.3');
+@import url('product-card.css?v=1.3');
+@import url('shop.css?v=1.3');
+@import url('pdp.css?v=1.3');
+@import url('cart.css?v=1.3');
+@import url('checkout.css?v=1.3');
+@import url('account.css?v=1.3');
+@import url('auth.css?v=1.3');
+@import url('home-sections.css?v=1.3');
+@import url('blog.css?v=1.3');
+@import url('test-runner.css?v=1.3');
+@import url('footer.css?v=1.3');
+@import url('responsive.css?v=1.3');

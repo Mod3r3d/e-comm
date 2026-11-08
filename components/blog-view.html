@@ -1,0 +1,69 @@
+<!-- ==========================================================================
+     BLOG & JOURNAL VIEW COMPONENT
+     ========================================================================== -->
+<div class="container" style="padding: 40px 0 80px;">
+  <!-- Breadcrumb -->
+  <div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 24px;">
+    <a href="index.html"><i class="fa-solid fa-house" style="margin-right: 4px;"></i>Trang chủ</a> / 
+    <strong>Bản tin nội thất (Journal)</strong>
+  </div>
+
+  <!-- Header Banner -->
+  <div style="text-align: center; max-width: 720px; margin: 0 auto 40px;">
+    <span style="font-size: 12px; font-weight: 800; letter-spacing: 2px; color: var(--color-accent-amber); text-transform: uppercase;">
+      <i class="fa-solid fa-feather-pointed" style="margin-right: 6px;"></i>WOODLUXE JOURNAL
+    </span>
+    <h1 style="font-size: 32px; font-weight: 800; color: var(--color-primary-navy); margin: 8px 0 16px;">
+      Tinh Hoa Thiết Kế Nội Thất & Phong Cách Sống Thượng Lưu
+    </h1>
+    <p style="color: var(--color-text-muted); font-size: 15px; line-height: 1.6;">
+      Khám phá các bài viết chuyên sâu về phối màu tối giản, chất liệu gỗ sồi tự nhiên, nghệ thuật chiếu sáng đa tầng và triết lý sống Japandi từ các chuyên gia kiến trúc hàng đầu.
+    </p>
+  </div>
+
+  <!-- Filter Bar with Category Pills & Search -->
+  <div class="blog-filter-bar">
+    <div class="blog-pills-group">
+      <button class="blog-pill-btn active" onclick="filterBlogCategory('all', this)">
+        <i class="fa-solid fa-layer-group"></i> Tất cả (6)
+      </button>
+      <button class="blog-pill-btn" onclick="filterBlogCategory('Interior Design', this)">
+        <i class="fa-solid fa-compass-drafting"></i> Interior Design (3)
+      </button>
+      <button class="blog-pill-btn" onclick="filterBlogCategory('Material & Craft', this)">
+        <i class="fa-solid fa-tree"></i> Material & Craft (2)
+      </button>
+      <button class="blog-pill-btn" onclick="filterBlogCategory('Smart Living', this)">
+        <i class="fa-solid fa-house-laptop"></i> Smart Living (1)
+      </button>
+    </div>
+
+    <div class="blog-search-box">
+      <i class="fa-solid fa-magnifying-glass" style="color: var(--color-text-muted); margin-right: 8px;"></i>
+      <input type="text" id="blog-search-input" placeholder="Tìm bài viết..." oninput="handleBlogSearch(this.value)" />
+    </div>
+  </div>
+
+  <!-- 6 Blog Posts Grid -->
+  <div id="blog-posts-grid" class="blog-posts-grid">
+    <!-- Populated by renderBlogPosts() -->
+  </div>
+
+  <!-- Newsletter Signup Banner -->
+  <div style="background: var(--color-primary-navy); border-radius: var(--radius-md); padding: 48px; color: #fff; margin-top: 60px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px;">
+    <div>
+      <span style="color: var(--color-accent-amber); font-weight: 800; font-size: 12px; letter-spacing: 2px;">
+        <i class="fa-solid fa-envelope-open-text" style="margin-right: 6px;"></i>ĐĂNG KÝ BẢN TIN ĐỊNH KỲ
+      </span>
+      <h3 style="font-size: 24px; font-weight: 800; margin: 8px 0;">Nhận Cẩm Nang Xu Hướng Nội Thất 2026</h3>
+      <p style="color: #9ca3af; font-size: 14px;">Cập nhật những bộ sưu tập mới nhất và voucher giảm giá 10% độc quyền vào mỗi tuần.</p>
+    </div>
+    <div style="display: flex; gap: 10px; max-width: 440px; width: 100%;">
+      <input type="email" placeholder="Nhập địa chỉ email của bạn..." class="form-control" style="background: #142238; border-color: #22344d; color: #fff;" />
+      <button class="btn-primary" onclick="alert('Cảm ơn bạn đã đăng ký nhận bản tin WOODLUXE Journal!')">
+        <i class="fa-solid fa-paper-plane"></i>
+        <span>ĐĂNG KÝ</span>
+      </button>
+    </div>
+  </div>
+</div>

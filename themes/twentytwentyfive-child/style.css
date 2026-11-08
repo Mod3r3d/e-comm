@@ -1,0 +1,52 @@
+/*
+Theme Name: Twenty Twenty-Five Child - WOODLUXE
+Theme URI: https://woodluxe.vn
+Description: WOODLUXE Luxury International Furniture - FSE Child Theme for Twenty Twenty-Five, implementing modern WoodMart aesthetics and WooCommerce FSE templates.
+Author: WOODLUXE Engineering Team
+Author URI: https://woodluxe.vn
+Template: twentytwentyfive
+Version: 1.0.0
+Requires at least: 6.7
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: twentytwentyfive-child
+Tags: full-site-editing, block-patterns, e-commerce, custom-colors, custom-typography, translation-ready
+*/
+
+/* Enqueue Parent & Child Custom Tokens */
+:root {
+  --woodluxe-navy: #0c192c;
+  --woodluxe-amber: #f4a51d;
+  --woodluxe-amber-hover: #d98e12;
+  --woodluxe-bg-light: #f8fafc;
+  --woodluxe-text-main: #1f2937;
+  --woodluxe-text-muted: #6b7280;
+  --woodluxe-border: #e5e7eb;
+}
+
+/* Base FSE adjustments */
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--woodluxe-text-main);
+  background-color: #ffffff;
+}
+
+/* WooCommerce Button Enhancements */
+.woocommerce button.button.alt,
+.woocommerce a.button.alt,
+.woocommerce #respond input#submit.alt {
+  background-color: var(--woodluxe-amber) !important;
+  color: var(--woodluxe-navy) !important;
+  font-weight: 700 !important;
+  border-radius: 4px !important;
+  text-transform: uppercase !important;
+  transition: all 0.25s ease !important;
+}
+
+.woocommerce button.button.alt:hover,
+.woocommerce a.button.alt:hover,
+.woocommerce #respond input#submit.alt:hover {
+  background-color: var(--woodluxe-amber-hover) !important;
+  color: #ffffff !important;
+}

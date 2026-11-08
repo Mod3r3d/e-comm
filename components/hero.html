@@ -1,0 +1,58 @@
+<!-- HERO SLIDER SECTION (Matching Reference Image) -->
+<section class="hero-slider-section">
+  <!-- Slide 1: Reddington Sofa -->
+  <div class="hero-slide active">
+    <img src="assets/images/hero-sofa.jpg" class="hero-bg-image" alt="Reddington Living Room Sofa" />
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-subtitle">CHẾ TÁC BẮC ÂU THƯỢNG LƯU • VẢI BOUCLÉ NGUYÊN BẢN</span>
+        <h1 class="hero-title">Sofa Module Reddington 6-Piece — Đỉnh Cao Tiện Nghi & Nghệ Thuật Không Gian.</h1>
+        <div class="hero-buttons">
+          <button class="btn-primary" onclick="openProductModal(1)">
+            <span>XEM CHI TIẾT</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+          <a href="shop.html?category=Sofas" class="btn-outline-white">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span>VÀO CỬA HÀNG</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 2: Aarhus Dining Table -->
+  <div class="hero-slide">
+    <img src="assets/images/dining-table.jpg" class="hero-bg-image" alt="Aarhus Scandinavian Dining Table" />
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-subtitle">GỖ SỒI TRẮNG CHÂU ÂU • NGHỆ THUẬT MỘC THỦ CÔNG</span>
+        <h2 class="hero-title">Bàn Ăn Aarhus Scandinavian — Tinh Hoa Chế Tác Bắc Âu Đích Thực.</h2>
+        <div class="hero-buttons">
+          <button class="btn-primary" onclick="openProductModal(2)">
+            <span>XEM CHI TIẾT</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+          <a href="shop.html?category=Tables" class="btn-outline-white">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span>KHÁM PHÁ BÀN ĂN</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Arrows -->
+  <button id="hero-prev-btn" class="hero-nav-arrow hero-nav-prev" title="Slide trước">
+    <i class="fa-solid fa-chevron-left"></i>
+  </button>
+  <button id="hero-next-btn" class="hero-nav-arrow hero-nav-next" title="Slide tiếp">
+    <i class="fa-solid fa-chevron-right"></i>
+  </button>
+
+  <!-- Pagination Indicators: Round Dots -->
+  <div class="hero-pagination-dots" role="tablist" aria-label="Hero slider pagination">
+    <button type="button" class="hero-page-indicator active" data-slide="0" aria-label="Slide 1"></button>
+    <button type="button" class="hero-page-indicator" data-slide="1" aria-label="Slide 2"></button>
+  </div>
+</section>

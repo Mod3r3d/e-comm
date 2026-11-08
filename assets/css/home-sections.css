@@ -1,0 +1,249 @@
+/* ==========================================================================
+   WOODLUXE DESIGN SYSTEM — HOMEPAGE QUICK SECTION NAV & TESTIMONIALS
+   ========================================================================== */
+
+/* Quick Section Sticky Bar */
+.home-section-nav-bar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--color-border);
+  padding: 12px 0;
+  position: sticky;
+  top: 51px; /* Just below main navbar */
+  z-index: 850;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  transition: var(--transition-smooth);
+}
+
+.home-section-pills {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 2px 0;
+}
+
+.home-section-pill {
+  padding: 7px 16px;
+  border-radius: 20px;
+  background: #f8fafc;
+  border: 1px solid var(--color-border);
+  color: var(--color-primary-navy);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-smooth);
+}
+
+.home-section-pill:hover,
+.home-section-pill.active {
+  background: var(--color-primary-navy);
+  color: #ffffff;
+  border-color: var(--color-primary-navy);
+  transform: translateY(-1px);
+}
+
+.home-section-pill i {
+  color: var(--color-accent-amber);
+  font-size: 12px;
+}
+
+/* Luxury Centered Section Header (Reviews & Highlights) */
+.luxury-section-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 38px;
+}
+
+.luxury-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fefce8;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.luxury-heading {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-primary-navy);
+  letter-spacing: -0.5px;
+  margin: 0 0 10px;
+  position: relative;
+  text-align: center;
+}
+
+.luxury-heading::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: var(--color-accent-amber);
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+.luxury-subtitle {
+  color: #64748b;
+  font-size: 14.5px;
+  line-height: 1.6;
+  margin: 12px auto 0;
+}
+
+/* Verified Customer Testimonials Grid */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.testimonial-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 26px;
+  box-shadow: 0 4px 14px rgba(12, 25, 44, 0.04);
+  transition: var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 30px rgba(12, 25, 44, 0.08);
+  border-color: #cbd5e1;
+}
+
+.testimonial-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.testimonial-rating {
+  color: var(--color-star-yellow);
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.testimonial-rating .rating-num {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--color-primary-navy);
+  margin-left: 6px;
+}
+
+.quote-mark {
+  color: #e2e8f0;
+  font-size: 22px;
+  transition: var(--transition-smooth);
+}
+
+.testimonial-card:hover .quote-mark {
+  color: var(--color-accent-amber);
+  transform: scale(1.1);
+}
+
+.testimonial-quote {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--color-text-main);
+  font-style: italic;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.testimonial-author-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.testimonial-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary-navy), #1e3a63);
+  color: var(--color-accent-amber);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 3px 8px rgba(12, 25, 44, 0.18);
+  border: 2px solid #ffffff;
+  flex-shrink: 0;
+}
+
+.testimonial-author-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary-navy);
+  margin-bottom: 2px;
+}
+
+.testimonial-author-role {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Journal View All Link */
+.journal-view-all-link {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--color-accent-amber);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  background: #fefce8;
+  border: 1px solid #fde68a;
+  transition: var(--transition-smooth);
+  text-decoration: none;
+}
+
+.journal-view-all-link:hover {
+  background: var(--color-accent-amber);
+  color: #ffffff;
+  border-color: var(--color-accent-amber);
+  transform: translateX(4px);
+}
+
+/* Home Blog Articles Grid */
+.home-blog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 992px) {
+  .testimonials-grid,
+  .home-blog-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-section-pills {
+    justify-content: flex-start;
+  }
+}

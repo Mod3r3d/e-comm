@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thanh Toán Đơn Hàng — WOODLUXE Checkout</title>
+  <meta name="description" content="Xác nhận đơn hàng và thanh toán an toàn tại WOODLUXE. Hỗ trợ COD và chuyển khoản ngân hàng." />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css" />
+  <link rel="stylesheet" href="assets/css/style.css?v=1.3" />
+</head>
+<body>
+
+  <!-- Top notice bar -->
+  <div class="top-notice-bar">
+    <div class="container">
+      <div class="top-notice-left">
+        <span><i class="fa-solid fa-phone-volume"></i> Hotline tư vấn: <strong>1900 6868</strong></span>
+        <span><i class="fa-solid fa-location-dot"></i> Showroom: <strong>Quận 1, TP. Hồ Chí Minh</strong></span>
+        <span><i class="fa-solid fa-truck-fast"></i> Giao hàng & Lắp đặt miễn phí đơn từ 10.000.000₫</span>
+      </div>
+      <div class="top-notice-right">
+        <span><i class="fa-solid fa-headset"></i> Hỗ trợ thanh toán</span>
+        <a href="javascript:void(0)" onclick="openOrderTrackingModal()" class="top-notice-track-btn" style="color: inherit; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; margin-left: 14px;"><i class="fa-solid fa-truck-fast"></i> Theo dõi đơn hàng</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN HEADER ================= -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-wrapper">
+        <a href="index.html" class="brand-logo">
+          <div class="logo-icon">
+            <i class="hgi-stroke hgi-sofa-01"></i>
+          </div>
+          <div>
+            WOODLUXE
+            <span class="brand-tagline">INTERNATIONAL LIVING</span>
+          </div>
+        </a>
+
+        <div class="header-search-container">
+          <form class="search-form" onsubmit="event.preventDefault(); handleLiveSearch(document.getElementById('header-search-input').value);">
+            <input type="text" id="header-search-input" class="search-input" placeholder="Tìm kiếm sản phẩm nội thất..." autocomplete="off" />
+            
+            <!-- Custom Themed Search Category Dropdown -->
+            <div class="search-category-picker" id="search-category-picker">
+              <input type="hidden" id="search-category-filter" value="all" />
+              <button type="button" class="search-category-current" id="search-category-current-btn" onclick="toggleSearchCategoryMenu(event)" title="Chọn danh mục">
+                <span id="search-category-current-label">Tất cả danh mục</span>
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+              <div class="search-category-menu" id="search-category-menu">
+                <div class="search-category-option active" data-cat="all" onclick="selectSearchCategory('all', 'Tất cả danh mục')">
+                  <i class="fa-solid fa-border-all"></i>
+                  <span>Tất cả danh mục</span>
+                </div>
+                <div class="search-category-option" data-cat="Sofas" onclick="selectSearchCategory('Sofas', 'Sofa')">
+                  <i class="fa-solid fa-couch"></i>
+                  <span>Sofa</span>
+                </div>
+                <div class="search-category-option" data-cat="Chairs" onclick="selectSearchCategory('Chairs', 'Ghế')">
+                  <i class="fa-solid fa-chair"></i>
+                  <span>Ghế</span>
+                </div>
+                <div class="search-category-option" data-cat="Tables" onclick="selectSearchCategory('Tables', 'Bàn')">
+                  <i class="fa-solid fa-table"></i>
+                  <span>Bàn</span>
+                </div>
+                <div class="search-category-option" data-cat="Beds" onclick="selectSearchCategory('Beds', 'Giường ngủ')">
+                  <i class="fa-solid fa-bed"></i>
+                  <span>Giường ngủ</span>
+                </div>
+                <div class="search-category-option" data-cat="Lighting" onclick="selectSearchCategory('Lighting', 'Đèn trang trí')">
+                  <i class="fa-solid fa-lightbulb"></i>
+                  <span>Đèn trang trí</span>
+                </div>
+                <div class="search-category-option" data-cat="Decoration" onclick="selectSearchCategory('Decoration', 'Đồ trang trí')">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i>
+                  <span>Đồ trang trí</span>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="search-submit-btn" title="Tìm kiếm">
+              <i class="hgi-stroke hgi-search-01"></i>
+            </button>
+          </form>
+          <div id="live-search-dropdown" class="live-search-results"></div>
+        </div>
+
+        <div class="header-actions">
+          <div id="header-user-action-container">
+            <!-- Dynamically populated by initAuthSystem() -->
+          </div>
+
+          <a href="wishlist.html" class="action-item">
+            <div class="action-icon-wrap">
+              <i class="hgi-stroke hgi-favourite"></i>
+              <span id="header-wishlist-count" class="badge-count">0</span>
+            </div>
+            <span>Yêu thích</span>
+          </a>
+
+          <div class="action-item" onclick="openCartDrawer()">
+            <div class="action-icon-wrap">
+              <i class="hgi-stroke hgi-shopping-bag-02"></i>
+              <span id="header-cart-count" class="badge-count">0</span>
+            </div>
+            <div>
+              <span class="cart-total-text" id="header-cart-total-price">0₫</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= NAVIGATION BAR ================= -->
+  <nav class="nav-bar">
+    <div class="container">
+      <div class="nav-wrapper">
+        <!-- Browse Categories Button & Dropdown -->
+        <div class="browse-categories-wrapper">
+          <div id="browse-categories-btn" class="browse-categories-btn" role="button" aria-haspopup="true" aria-expanded="false">
+            <i class="fa-solid fa-bars-staggered"></i>
+            <span>DANH MỤC SẢN PHẨM</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </div>
+          <div id="browse-categories-dropdown" class="browse-dropdown-menu"></div>
+        </div>
+
+        <ul class="main-nav-links">
+          <li class="nav-link-item"><a href="index.html"><i class="fa-solid fa-house"></i> TRANG CHỦ</a></li>
+          <li class="nav-link-item"><a href="shop.html"><i class="fa-solid fa-store"></i> CỬA HÀNG (SHOP)</a></li>
+          <li class="nav-link-item"><a href="blog.html"><i class="fa-solid fa-newspaper"></i> BẢN TIN NỘI THẤT</a></li>
+        </ul>
+
+        <div class="nav-right-highlight">
+          <a href="shop.html?sale=true" class="special-offer-btn">
+            <i class="fa-solid fa-fire-flame-curved"></i>
+            <span>ƯU ĐÃI ĐẶC BIỆT</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Checkout View Main -->
+  <main class="view-section" style="display: block; padding: 40px 0 80px;">
+    <div class="container">
+      <!-- Breadcrumb -->
+      <div style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 20px;">
+        <a href="index.html"><i class="fa-solid fa-house" style="margin-right: 4px;"></i>Trang chủ</a> / <a href="shop.html">Cửa hàng</a> / <strong>Thanh toán</strong>
+      </div>
+
+      <h2 style="font-size: 26px; font-weight: 800; color: var(--color-primary-navy); margin-bottom: 24px; display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-credit-card" style="color: var(--color-accent-amber);"></i>
+        <span>XÁC NHẬN ĐƠN HÀNG & THANH TOÁN</span>
+      </h2>
+
+      <div class="checkout-grid">
+        <!-- Billing Details Form -->
+        <div class="checkout-card">
+          <h3>
+            <i class="fa-solid fa-truck-ramp-box"></i>
+            <span>Thông tin giao hàng</span>
+          </h3>
+          <form id="checkout-form" onsubmit="submitCheckoutOrder(event)">
+            <div class="form-group">
+              <label>Họ và tên người nhận *</label>
+              <input type="text" id="checkout-name" class="form-control" placeholder="Nhập họ và tên người nhận..." required />
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label>Số điện thoại *</label>
+                <input type="tel" id="checkout-phone" class="form-control" placeholder="Số điện thoại nhận hàng..." required />
+              </div>
+              <div class="form-group">
+                <label>Địa chỉ Email *</label>
+                <input type="email" id="checkout-email" class="form-control" placeholder="Email nhận thông báo đơn hàng..." required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Địa chỉ giao hàng chi tiết *</label>
+              <textarea id="checkout-address" class="form-control" rows="3" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/TP..." required></textarea>
+            </div>
+            <div class="form-group">
+              <label>Ghi chú đơn hàng (Tùy chọn)</label>
+              <textarea class="form-control" rows="2" placeholder="Thời gian giao thuận tiện, hướng dẫn chỉ đường..."></textarea>
+            </div>
+
+            <!-- Payment Methods -->
+            <h3 style="margin-top: 30px;">
+              <i class="fa-solid fa-wallet"></i>
+              <span>Phương thức thanh toán</span>
+            </h3>
+            <label class="payment-method-card selected">
+              <input type="radio" name="payment_method" value="COD" checked />
+              <i class="fa-solid fa-money-bill-transfer"></i>
+              <div>
+                <strong>Thanh toán khi nhận hàng (COD)</strong>
+                <p style="font-size: 12px; color: var(--color-text-muted);">Quý khách thanh toán tiền mặt trực tiếp cho nhân viên giao hàng sau khi kiểm tra nội thất.</p>
+              </div>
+            </label>
+            <label class="payment-method-card">
+              <input type="radio" name="payment_method" value="BANK_TRANSFER" />
+              <i class="fa-solid fa-building-columns"></i>
+              <div>
+                <strong>Chuyển khoản Ngân hàng (Thử nghiệm)</strong>
+                <p style="font-size: 12px; color: var(--color-text-muted);">Ngân hàng Vietcombank • STK: 9988776655 • Chủ TK: CTY WOODLUXE VIETNAM.</p>
+              </div>
+            </label>
+
+            <button type="submit" class="btn-place-order" id="btn-place-order" style="margin-top: 20px;">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>ĐẶT HÀNG NGAY</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="checkout-card" style="height: fit-content;">
+          <h3>
+            <i class="fa-solid fa-receipt"></i>
+            <span>Đơn hàng của bạn</span>
+          </h3>
+          <div id="checkout-items-summary" style="margin-bottom: 16px;"></div>
+
+          <!-- Coupon Code Input -->
+          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+            <input type="text" id="checkout-coupon-input" class="coupon-input" placeholder="Mã giảm giá (WOODLUXE10, voucher đã đổi)..." style="font-size: 13px; padding: 9px 12px; flex: 1;" />
+            <button type="button" class="btn-apply-coupon" onclick="applyCheckoutCoupon()" style="padding: 9px 14px; font-size: 12px; font-weight: 700;">
+              ÁP DỤNG
+            </button>
+          </div>
+
+          <!-- Loyalty Points Redemption Card -->
+          <div class="checkout-points-card" style="background: #fffaf0; border: 1.5px dashed var(--color-accent-amber); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-coins" style="font-size: 20px; color: var(--color-accent-amber);"></i>
+                <div>
+                  <strong style="color: var(--color-primary-navy); font-size: 13px;">Dùng điểm tích lũy</strong>
+                  <div style="font-size: 11px; color: var(--color-text-muted);">
+                    Có sẵn: <strong id="checkout-points-balance" style="color: var(--color-accent-amber);">0</strong> điểm (≈ <span id="checkout-points-value">0₫</span>)
+                  </div>
+                </div>
+              </div>
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; margin: 0;">
+                <input type="checkbox" id="checkout-use-points-toggle" onchange="toggleUsePoints(this.checked)" style="width: 17px; height: 17px; accent-color: var(--color-accent-amber); cursor: pointer;" />
+                <span style="font-size: 12px; font-weight: 700; color: var(--color-primary-navy);">Dùng điểm</span>
+              </label>
+            </div>
+
+            <div id="checkout-points-input-row" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(244, 165, 29, 0.4);">
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="number" id="checkout-points-amount" min="1" placeholder="Số điểm muốn trừ..." 
+                  style="flex: 1; padding: 7px 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 13px;" oninput="handlePointsAmountChange(this.value)" />
+                <button type="button" onclick="applyMaxPoints()" 
+                  style="padding: 7px 12px; background: var(--color-primary-navy); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                  TỐI ĐA
+                </button>
+              </div>
+              <div id="checkout-points-discount-text" style="font-size: 12px; color: var(--color-success-green); font-weight: 600; margin-top: 6px;">
+                Giảm: 0₫
+              </div>
+            </div>
+          </div>
+
+          <div class="cart-summary-line">
+            <span>Tổng phụ (Subtotal)</span>
+            <strong id="checkout-subtotal">0₫</strong>
+          </div>
+          <div class="cart-summary-line">
+            <span>Giảm giá (Coupon)</span>
+            <span id="checkout-discount" style="color: var(--color-sale-red);">0₫</span>
+          </div>
+          <div class="cart-summary-line" id="checkout-points-line" style="display: none;">
+            <span>Dùng điểm (<span id="checkout-points-used-lbl">0</span> điểm)</span>
+            <span id="checkout-points-discount" style="color: var(--color-success-green); font-weight: 700;">-0₫</span>
+          </div>
+          <div class="cart-summary-line">
+            <span>Phí giao hàng & lắp đặt</span>
+            <strong style="color: var(--color-success-green); display: inline-flex; align-items: center; gap: 4px;">
+              <i class="fa-solid fa-circle-check"></i> Miễn phí
+            </strong>
+          </div>
+          <div class="cart-summary-line" style="background: #f8fafc; padding: 8px 12px; border-radius: 4px; margin: 8px 0; border: 1px dashed #cbd5e1;">
+            <span style="font-size: 12px; color: var(--color-text-muted);"><i class="fa-solid fa-gift" style="color: var(--color-accent-amber);"></i> Điểm thưởng nhận được:</span>
+            <strong id="checkout-earned-points" style="color: var(--color-accent-amber); font-size: 13px;">+0 điểm</strong>
+          </div>
+          <div class="cart-summary-line cart-summary-total"><div class="cart-summary-line cart-summary-total">
+            <span>Tổng thanh toán</span>
+            <span id="checkout-total" style="color: var(--color-accent-amber);">0₫</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modals -->
+  <div id="order-success-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 520px; padding: 20px;">
+      <div id="order-success-details"></div>
+    </div>
+  </div>
+
+  <!-- Authentication Modal (Login / Register / Guest Gating) -->
+  <div id="auth-modal" class="modal-overlay">
+    <div class="auth-modal-card">
+      <div class="auth-modal-header">
+        <div class="auth-brand-logo">
+          <div class="logo-icon">
+            <i class="hgi-stroke hgi-sofa-01"></i>
+          </div>
+          <span>WOODLUXE</span>
+        </div>
+        <p class="auth-subtitle">Cổng thành viên & Quản lý không gian sống</p>
+      </div>
+
+      <!-- Guest Action Notice Banner -->
+      <div id="auth-notice-gate" class="auth-notice-gate">
+        <i class="fa-solid fa-lock" style="color: var(--color-accent-amber); font-size: 14px;"></i>
+        <span id="auth-notice-text">Vui lòng đăng nhập để lưu sản phẩm vào giỏ hàng!</span>
+      </div>
+
+      <div class="auth-tabs-nav">
+        <button type="button" class="auth-tab-btn active" data-tab="login" onclick="switchAuthTab('login')">
+          <i class="fa-solid fa-arrow-right-to-bracket" style="margin-right: 6px;"></i>ĐĂNG NHẬP
+        </button>
+        <button type="button" class="auth-tab-btn" data-tab="register" onclick="switchAuthTab('register')">
+          <i class="fa-solid fa-user-plus" style="margin-right: 6px;"></i>ĐĂNG KÝ
+        </button>
+      </div>
+
+      <div class="auth-modal-body">
+        <!-- Tab 1: Login Form -->
+        <div id="auth-pane-login" class="auth-tab-pane active">
+          <form id="auth-login-form" onsubmit="handleLoginSubmit(event)">
+            <div class="auth-form-group">
+              <label for="auth-login-email">Email hoặc Số điện thoại</label>
+              <div class="auth-input-wrap">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="text" id="auth-login-email" placeholder="name@example.com" value="nam.nguyen@woodluxe.vn" required />
+              </div>
+            </div>
+
+            <div class="auth-form-group">
+              <label for="auth-login-password">Mật khẩu</label>
+              <div class="auth-input-wrap">
+                <i class="fa-solid fa-key"></i>
+                <input type="password" id="auth-login-password" placeholder="••••••••" value="123456" required />
+                <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('auth-login-password', this)" title="Hiện mật khẩu" aria-label="Hiện mật khẩu">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 12px;">
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: var(--color-text-main);">
+                <input type="checkbox" checked /> Ghi nhớ đăng nhập
+              </label>
+              <a href="javascript:void(0)" onclick="alert('Tính năng khôi phục mật khẩu qua SMS OTP đang được kích hoạt.')" style="color: var(--color-accent-amber); font-weight: 600;">Quên mật khẩu?</a>
+            </div>
+
+            <button type="submit" class="btn-auth-submit">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              <span>ĐĂNG NHẬP NGAY</span>
+            </button>
+          </form>
+
+          <button type="button" class="btn-quick-sample-login" onclick="handleQuickSampleLogin()">
+            <i class="fa-solid fa-bolt" style="color: var(--color-accent-amber);"></i>
+            <span>Đăng nhập nhanh (Tài khoản mẫu: Nguyễn Văn Nam)</span>
+          </button>
+        </div>
+
+        <!-- Tab 2: Register Form -->
+        <div id="auth-pane-register" class="auth-tab-pane">
+          <form id="auth-register-form" onsubmit="handleRegisterSubmit(event)">
+            <div class="auth-form-group">
+              <label for="auth-reg-name">Họ và tên của bạn</label>
+              <div class="auth-input-wrap">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="auth-reg-name" placeholder="Ví dụ: Lê Minh Anh" required />
+              </div>
+            </div>
+
+            <div class="auth-form-group">
+              <label for="auth-reg-email">Địa chỉ Email</label>
+              <div class="auth-input-wrap">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="auth-reg-email" placeholder="name@example.com" required />
+              </div>
+            </div>
+
+            <div class="auth-form-group">
+              <label for="auth-reg-phone">Số điện thoại</label>
+              <div class="auth-input-wrap">
+                <i class="fa-solid fa-phone"></i>
+                <input type="tel" id="auth-reg-phone" placeholder="0908 xxx xxx" />
+              </div>
+            </div>
+
+            <div class="auth-form-group">
+              <label for="auth-reg-password">Tạo mật khẩu</label>
+              <div class="auth-input-wrap">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="auth-reg-password" placeholder="Tối thiểu 6 ký tự" required />
+                <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('auth-reg-password', this)" title="Hiện mật khẩu" aria-label="Hiện mật khẩu">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-auth-submit" style="background: var(--color-accent-amber); color: var(--color-primary-navy);">
+              <i class="fa-solid fa-user-check"></i>
+              <span>HOÀN TẤT ĐĂNG KÝ</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 16px;">
+            <div class="logo-icon">
+              <i class="hgi-stroke hgi-sofa-01"></i>
+            </div>
+            <div>WOODLUXE</div>
+          </div>
+          <p>Thương hiệu nội thất quốc tế kiến tạo không gian sống thượng lưu tại Việt Nam. Tinh hoa chế tác Bắc Âu kết
+            hợp phong cách tối giản Japandi.</p>
+          <p style="font-size: 12px; color: #6b7280;">Hệ thống thương mại điện tử nội thất cao cấp tiêu chuẩn quốc tế.</p>
+          <div class="footer-social-row">
+            <a href="javascript:void(0)" class="footer-social-btn" title="Facebook"><i
+                class="fa-brands fa-facebook-f"></i></a>
+            <a href="javascript:void(0)" class="footer-social-btn" title="Instagram"><i
+                class="fa-brands fa-instagram"></i></a>
+            <a href="javascript:void(0)" class="footer-social-btn" title="Pinterest"><i
+                class="fa-brands fa-pinterest-p"></i></a>
+            <a href="javascript:void(0)" class="footer-social-btn" title="YouTube"><i
+                class="fa-brands fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4><i class="fa-solid fa-couch"></i> Danh mục mua sắm</h4>
+          <ul class="footer-links">
+            <li><a href="shop.html?category=Chairs"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+                Chairs (Ghế thư giãn & Ghế ăn)</a></li>
+            <li><a href="shop.html?category=Tables"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+                Tables (Bàn ăn & Bàn trà)</a></li>
+            <li><a href="shop.html?category=Sofas"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+                Sofas (Sofa Module & Sofa văng)</a></li>
+            <li><a href="shop.html?category=Beds"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+                Beds (Giường ngủ Platform)</a></li>
+            <li><a href="shop.html?category=Lighting"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+                Lighting (Đèn trang trí)</a></li>
+            <li><a href="shop.html?category=Decoration"><i class="fa-solid fa-chevron-right"
+                  style="font-size: 10px;"></i> Decoration (Phụ kiện Japandi)</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4><i class="fa-solid fa-shield-halved"></i> Chính sách & Hỗ trợ</h4>
+          <ul class="footer-links">
+            <li><a href="javascript:void(0)"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i> Chính
+                sách bảo hành 5 năm</a></li>
+            <li><a href="javascript:void(0)"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i> Vận
+                chuyển & Lắp đặt tận nhà</a></li>
+            <li><a href="javascript:void(0)"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i> Đổi trả
+                trong vòng 30 ngày</a></li>
+            <li><a href="javascript:void(0)"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i> Hướng
+                dẫn chăm sóc gỗ & da</a></li>
+            <li><a href="javascript:void(0)" onclick="openTestRunnerModal()"><i class="fa-solid fa-chevron-right"
+                  style="font-size: 10px;"></i> Báo cáo kiểm thử chất lượng</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4><i class="fa-solid fa-envelope-open-text"></i> Bản tin ưu đãi</h4>
+          <p>Đăng ký nhận bản tin để nhận ngay voucher giảm 10% cho đơn hàng đầu tiên.</p>
+          <div style="display: flex; gap: 8px;">
+            <input type="email" placeholder="Email của bạn..." class="form-control"
+              style="background: #142238; border-color: #22344d; color: #fff;" />
+            <button class="btn-primary" style="padding: 10px 16px;"
+              onclick="alert('Đăng ký thành công! Mã ưu đãi của bạn: WOODLUXE10')">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>GỬI</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 WOODLUXE Vietnam. All Rights Reserved.</div>
+        <div style="display: flex; gap: 16px;">
+          <span class="footer-bottom-badge"><i class="fa-solid fa-shield-halved"></i> Thanh toán an toàn</span>
+          <span class="footer-bottom-badge"><i class="fa-solid fa-truck-fast"></i> Giao tận nơi</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/products-data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCheckoutSummary();
+    });
+  </script>
+</body>
+</html>

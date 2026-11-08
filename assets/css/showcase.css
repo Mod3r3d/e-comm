@@ -1,0 +1,166 @@
+/* ==========================================================================
+   WOODLUXE DESIGN SYSTEM — SHOWCASE SECTION (SALE & SPECIAL OFFERS)
+   ========================================================================== */
+
+.two-col-showcase {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 28px;
+  margin-top: 20px;
+}
+
+/* Left: Sale Spotlight Card */
+.sale-spotlight-box {
+  background: #ffffff;
+  border: 2px solid var(--color-accent-amber);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.sale-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.sale-box-title {
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--color-primary-navy);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.sale-box-title i {
+  color: var(--color-accent-amber);
+}
+.sale-product-image-wrap {
+  width: 100%;
+  height: 240px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: #f8f9fa;
+  position: relative;
+  cursor: pointer;
+}
+.sale-product-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-smooth);
+}
+.sale-spotlight-box:hover .sale-product-image-wrap img {
+  transform: scale(1.05);
+}
+.sale-countdown {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 12px 0;
+}
+.countdown-unit {
+  background: var(--color-primary-navy);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  min-width: 44px;
+  text-align: center;
+}
+.countdown-num {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--color-accent-amber);
+}
+.countdown-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #a0aec0;
+}
+
+/* Right: Special Offers Tabbed Box */
+.tabbed-showcase-box {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+.showcase-tabs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 14px;
+  margin-bottom: 24px;
+}
+.tab-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.tab-btn {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 0 4px 6px 4px;
+  position: relative;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: color var(--transition-smooth);
+}
+.tab-btn:hover {
+  color: var(--color-accent-amber);
+}
+.tab-btn.active {
+  color: var(--color-primary-navy);
+}
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-accent-amber);
+}
+
+.btn-refresh-collection {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-smooth);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.btn-refresh-collection:hover {
+  color: var(--color-accent-amber);
+  border-color: var(--color-accent-amber);
+  background: #fffbeb;
+  transform: scale(1.06);
+}
+.btn-refresh-collection.spinning i {
+  animation: spinIcon 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes spinIcon {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.special-products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
