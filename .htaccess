@@ -2,28 +2,34 @@
 # WOODLUXE E-COMMERCE - PRODUCTION APACHE / INFINITYFREE CONFIGURATION
 # ==============================================================================
 
-# 1. Default Index File
-DirectoryIndex index.php index.html
+# 1. Default Index File (Direct HTML first for instant response)
+DirectoryIndex index.html index.php
 
 # 2. Character Encoding (UTF-8)
 AddDefaultCharset UTF-8
-AddCharset UTF-8 .html .css .js .json .xml
 
-# 3. Disable Directory Browsing (Security)
-Options -Indexes
+# 3. URL Rewriting & Clean URLs (Supports both /admin and /admin.html)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
 
-# 4. Protect Sensitive Files & Directories
-<FilesMatch "(^\.|\.sql$|\.csv$|\.bat$|\.zip$|\.md$|composer\.)">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
+    # Protect sensitive folders & files
+    RewriteRule ^database/.*\.sql$ - [F,L]
+    RewriteRule ^docs/ - [F,L]
+    RewriteRule ^scratch/ - [F,L]
 
-# Prevent access to database and docs directories directly via browser
-RedirectMatch 403 ^/database/.*\.sql$
-RedirectMatch 403 ^/docs/.*$
-RedirectMatch 403 ^/scratch/.*$
+    # If file or folder exists, serve directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
 
-# 5. MIME Types Configuration
+    # Map clean URL to .html file (e.g. /admin -> /admin.html)
+    RewriteCond %{DOCUMENT_ROOT}/$1.html -f [OR]
+    RewriteCond %{REQUEST_FILENAME}.html -f
+    RewriteRule ^(.*)$ $1.html [L]
+</IfModule>
+
+# 4. MIME Types Configuration
 <IfModule mod_mime.c>
     AddType text/html .html .htm
     AddType text/css .css
@@ -37,36 +43,21 @@ RedirectMatch 403 ^/scratch/.*$
     AddType font/woff .woff
 </IfModule>
 
-# 6. GZIP / Deflate Compression
+# 5. GZIP / Deflate Compression
 <IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html
-    AddOutputFilterByType DEFLATE text/css
-    AddOutputFilterByType DEFLATE text/plain
-    AddOutputFilterByType DEFLATE text/xml
-    AddOutputFilterByType DEFLATE application/javascript
-    AddOutputFilterByType DEFLATE application/json
-    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json image/svg+xml
 </IfModule>
 
-# 7. Browser Caching Configuration (Development & Instant Update Mode)
+# 6. Browser Caching Configuration (Instant Update Mode)
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresDefault "access plus 0 seconds"
-    
-    # HTML, CSS & JavaScript - Always Fresh
     ExpiresByType text/html "access plus 0 seconds"
     ExpiresByType text/css "access plus 0 seconds"
     ExpiresByType application/javascript "access plus 0 seconds"
-    
-    # Images & Media
-    ExpiresByType image/jpeg "access plus 1 month"
-    ExpiresByType image/png "access plus 1 month"
-    ExpiresByType image/webp "access plus 1 month"
-    ExpiresByType image/svg+xml "access plus 1 month"
-    ExpiresByType image/x-icon "access plus 1 year"
 </IfModule>
 
-# Prevent aggressive caching of scripts and styles on hosting
+# 7. Prevent Aggressive Script Caching
 <FilesMatch "\.(html|htm|js|css)$">
     <IfModule mod_headers.c>
         Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
@@ -74,11 +65,3 @@ RedirectMatch 403 ^/scratch/.*$
         Header set Expires "0"
     </IfModule>
 </FilesMatch>
-
-# 8. Security Headers
-<IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-XSS-Protection "1; mode=block"
-</IfModule>
-

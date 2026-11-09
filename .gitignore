@@ -89,8 +89,3 @@ __pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
-
-#others
-DEPLOYMENT_GUIDE_INFINITYFREE.md
-AGENTS.md
-start_xampp.bat
