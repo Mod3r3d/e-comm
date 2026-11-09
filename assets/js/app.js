@@ -115,6 +115,10 @@ const DEFAULT_INITIAL_ORDERS = [
 
     orderId: 'WLX-20261026-8892',
 
+    id: 'WLX-20261026-8892',
+
+    code: 'WLX-20261026-8892',
+
     date: '26/10/2026',
 
     customerName: 'Trần Hoàng Nam',
@@ -415,7 +419,24 @@ function getInitialUserOrders() {
 
       const parsed = JSON.parse(saved);
 
-      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed)) {
+        let changed = false;
+        parsed.forEach((o, idx) => {
+          let code = o.orderId || o.id || o.code;
+          if (!code || code === 'undefined' || code === 'null') {
+            const dateClean = (o.date || '').replace(/\D/g, '') || '20261109';
+            code = `WLX-${dateClean}-${Math.floor(1000 + (idx * 43) + Math.random() * 8000)}`;
+            changed = true;
+          }
+          o.id = code;
+          o.orderId = code;
+          o.code = code;
+        });
+        if (changed) {
+          localStorage.setItem(key, JSON.stringify(parsed));
+        }
+        return parsed;
+      }
 
     }
 
@@ -574,7 +595,7 @@ let specialTabOffsets = { new: 0, featured: 0, top: 0 };
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-
+  initCurrency();
   // Check URL parameters for multi-page support
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -1167,6 +1188,260 @@ function rateProduct(productId, score, event) {
 
 }
 
+/* ==========================================================================
+   CUSTOM ALERT POPUP SYSTEM (THAY THẾ TOÀN BỘ BROWSER ALERT)
+   ========================================================================== */
+
+function ensureCustomAlertModal() {
+  let overlay = document.getElementById('woodluxe-alert-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'woodluxe-alert-overlay';
+    overlay.className = 'custom-alert-overlay';
+    overlay.onclick = (e) => {
+      if (e.target === overlay) closeCustomAlertPopup();
+    };
+    overlay.innerHTML = `
+      <div class="custom-alert-card" onclick="event.stopPropagation()">
+        <div id="woodluxe-alert-icon-wrap" class="custom-alert-icon info">
+          <i id="woodluxe-alert-icon" class="fa-solid fa-circle-info"></i>
+        </div>
+        <h3 id="woodluxe-alert-title" class="custom-alert-title">Thông Báo</h3>
+        <p id="woodluxe-alert-msg" class="custom-alert-message"></p>
+        <button type="button" class="custom-alert-btn" onclick="closeCustomAlertPopup()">
+          ĐỒNG Ý
+        </button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        closeCustomAlertPopup();
+      }
+    });
+  }
+  return overlay;
+}
+
+function showCustomAlertPopup(message, title, type) {
+  if (!message) return;
+  const overlay = ensureCustomAlertModal();
+  const iconWrap = document.getElementById('woodluxe-alert-icon-wrap');
+  const icon = document.getElementById('woodluxe-alert-icon');
+  const titleEl = document.getElementById('woodluxe-alert-title');
+  const msgEl = document.getElementById('woodluxe-alert-msg');
+
+  // Auto-detect type & title if not explicitly provided
+  const msgLower = String(message).toLowerCase();
+  let resolvedType = type || 'info';
+  let resolvedTitle = title || 'Thông Báo Từ WOODLUXE';
+
+  if (!type) {
+    if (msgLower.includes('thành công') || msgLower.includes('áp dụng thành công') || msgLower.includes('đăng ký thành công')) {
+      resolvedType = 'success';
+      resolvedTitle = title || 'Thành Công';
+    } else if (msgLower.includes('không hợp lệ') || msgLower.includes('lỗi') || msgLower.includes('không tồn tại') || msgLower.includes('vui lòng') || msgLower.includes('chưa có')) {
+      resolvedType = 'warning';
+      resolvedTitle = title || 'Lưu Ý';
+    }
+  }
+
+  // Update styling
+  if (iconWrap && icon) {
+    iconWrap.className = `custom-alert-icon ${resolvedType}`;
+    if (resolvedType === 'success') {
+      icon.className = 'fa-solid fa-circle-check';
+    } else if (resolvedType === 'warning') {
+      icon.className = 'fa-solid fa-triangle-exclamation';
+    } else if (resolvedType === 'error') {
+      icon.className = 'fa-solid fa-circle-xmark';
+    } else {
+      icon.className = 'fa-solid fa-circle-info';
+    }
+  }
+
+  if (titleEl) titleEl.textContent = resolvedTitle;
+  if (msgEl) msgEl.textContent = String(message);
+
+  overlay.classList.add('active');
+}
+
+function closeCustomAlertPopup() {
+  const overlay = document.getElementById('woodluxe-alert-overlay');
+  if (overlay) overlay.classList.remove('active');
+}
+
+/* ==========================================================================
+   CUSTOM CONFIRMATION POPUP SYSTEM (THAY THẾ TOÀN BỘ BROWSER CONFIRM)
+   ========================================================================== */
+
+let currentConfirmCallback = null;
+let currentCancelCallback = null;
+
+function ensureCustomConfirmModal() {
+  let overlay = document.getElementById('woodluxe-confirm-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'woodluxe-confirm-overlay';
+    overlay.className = 'custom-alert-overlay';
+    overlay.style.zIndex = '999999';
+    overlay.onclick = (e) => {
+      if (e.target === overlay) handleCustomConfirmAction(false);
+    };
+    overlay.innerHTML = `
+      <div class="custom-alert-card" onclick="event.stopPropagation()" style="max-width: 440px;">
+        <div id="woodluxe-confirm-icon-wrap" class="custom-alert-icon warning">
+          <i id="woodluxe-confirm-icon" class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 id="woodluxe-confirm-title" class="custom-alert-title">Xác Nhận Hành Động</h3>
+        <p id="woodluxe-confirm-msg" class="custom-alert-message"></p>
+        <div style="display: flex; gap: 12px; margin-top: 24px; width: 100%;">
+          <button type="button" class="btn-outline-navy" onclick="handleCustomConfirmAction(false)" style="flex: 1; padding: 11px 16px; font-size: 13.5px; font-weight: 700; border-radius: var(--radius-sm); border: 1.5px solid var(--color-border); background: #f8fafc; color: var(--color-primary-navy); cursor: pointer; transition: all 0.2s;">
+            HỦY BỎ
+          </button>
+          <button type="button" class="btn-primary" onclick="handleCustomConfirmAction(true)" style="flex: 1; padding: 11px 16px; font-size: 13.5px; font-weight: 700; border-radius: var(--radius-sm); border: none; background: var(--color-accent-amber); color: #fff; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(244, 165, 29, 0.3);">
+            XÁC NHẬN
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        handleCustomConfirmAction(false);
+      }
+    });
+  }
+  return overlay;
+}
+
+function showCustomConfirmModal(message, title = 'Xác Nhận Hành Động', onConfirm = null, onCancel = null) {
+  if (!message) return;
+  const overlay = ensureCustomConfirmModal();
+  const titleEl = document.getElementById('woodluxe-confirm-title');
+  const msgEl = document.getElementById('woodluxe-confirm-msg');
+  if (titleEl) titleEl.textContent = title;
+  if (msgEl) msgEl.textContent = String(message);
+
+  currentConfirmCallback = onConfirm;
+  currentCancelCallback = onCancel;
+
+  overlay.classList.add('active');
+}
+
+function handleCustomConfirmAction(confirmed) {
+  const overlay = document.getElementById('woodluxe-confirm-overlay');
+  if (overlay) overlay.classList.remove('active');
+
+  if (confirmed && typeof currentConfirmCallback === 'function') {
+    currentConfirmCallback();
+  } else if (!confirmed && typeof currentCancelCallback === 'function') {
+    currentCancelCallback();
+  }
+  currentConfirmCallback = null;
+  currentCancelCallback = null;
+}
+
+// Global browser overrides to eliminate ALL default native dark popups across all pages
+window.alert = function(msg) {
+  showCustomAlertPopup(msg);
+};
+
+window.confirm = function(msg) {
+  showCustomConfirmModal(msg);
+  return false;
+};
+
+window.prompt = function(msg, def) {
+  showCustomAlertPopup((def ? `${msg} ${def}` : msg), 'Thông Tin', 'info');
+  return def || '';
+};
+
+/* ==========================================================================
+   CUSTOMER CARE & SUPPORT MODAL (HỖ TRỢ KHÁCH HÀNG 24/7)
+   ========================================================================== */
+
+function ensureSupportModalExists() {
+  if (document.getElementById('customer-support-modal')) return;
+
+  const modalHtml = `
+    <div id="customer-support-modal" class="modal-overlay custom-alert-overlay" onclick="if(event.target===this)closeSupportModal()">
+      <div class="custom-alert-card" onclick="event.stopPropagation()" style="max-width: 520px; text-align: left; padding: 0; overflow: hidden; border-radius: 16px; box-shadow: 0 25px 60px rgba(0,0,0,0.35);">
+        <!-- Header -->
+        <div style="background: var(--color-primary-navy); color: #fff; padding: 22px 24px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(244, 165, 29, 0.2); display: flex; align-items: center; justify-content: center;">
+              <i class="fa-solid fa-headset" style="font-size: 20px; color: var(--color-accent-amber);"></i>
+            </div>
+            <div>
+              <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: #fff;">TRUNG TÂM HỖ TRỢ KHÁCH HÀNG</h3>
+              <p style="margin: 2px 0 0; font-size: 12px; color: #94a3b8;">WOODLUXE VIP Concierge & Hỗ trợ tư vấn 24/7</p>
+            </div>
+          </div>
+          <button onclick="closeSupportModal()" style="background: none; border: none; color: #94a3b8; font-size: 26px; cursor: pointer; line-height: 1;" title="Đóng">&times;</button>
+        </div>
+
+        <!-- Body -->
+        <div style="padding: 22px 24px; display: flex; flex-direction: column; gap: 12px;">
+          <!-- Item 1: Hotline -->
+          <a href="tel:19006868" style="display: flex; align-items: center; gap: 14px; padding: 13px 16px; background: #f8fafc; border: 1.5px solid var(--color-border); border-radius: 10px; text-decoration: none; color: inherit; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--color-accent-amber)'" onmouseout="this.style.borderColor='var(--color-border)'">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+              <i class="fa-solid fa-phone-volume"></i>
+            </div>
+            <div style="flex: 1;">
+              <div style="font-size: 11.5px; color: #64748b; font-weight: 600;">Hotline tư vấn thiết kế & CSKH (Miễn phí)</div>
+              <div style="font-size: 16px; font-weight: 800; color: var(--color-primary-navy);">1900 6868 <span style="font-size: 12px; color: #16a34a; font-weight: 700;">● Hoạt động 24/7</span></div>
+            </div>
+            <span style="font-size: 12px; font-weight: 700; color: var(--color-accent-amber); display: flex; align-items: center; gap: 4px;">GỌI NGAY <i class="fa-solid fa-arrow-right"></i></span>
+          </a>
+
+          <!-- Item 2: Showroom -->
+          <div style="display: flex; align-items: center; gap: 14px; padding: 13px 16px; background: #f8fafc; border: 1.5px solid var(--color-border); border-radius: 10px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div style="flex: 1;">
+              <div style="font-size: 11.5px; color: #64748b; font-weight: 600;">Showroom trải nghiệm thực tế</div>
+              <div style="font-size: 14px; font-weight: 700; color: var(--color-primary-navy);">Trâu Quỳ, Gia Lâm, Hà Nội</div>
+              <div style="font-size: 11.5px; color: #64748b;">Mở cửa đón tiếp: 08:30 – 21:30 hàng ngày</div>
+            </div>
+          </div>
+
+          <!-- Item 3: Consultation Quick Button -->
+          <button type="button" onclick="closeSupportModal(); openConsultationModal();" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; background: var(--color-accent-amber); color: #fff; border: none; border-radius: 8px; font-size: 13.5px; font-weight: 800; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(244, 165, 29, 0.35);">
+            <i class="fa-solid fa-compass-drafting"></i> ĐĂNG KÝ TƯ VẤN THIẾT KẾ KHÔNG GIAN
+          </button>
+
+          <!-- Item 4: Online Chat / Email -->
+          <div style="display: flex; gap: 10px; margin-top: 2px;">
+            <a href="mailto:cskh@woodluxe.vn" style="flex: 1; text-align: center; padding: 10px; background: #ffffff; border: 1px solid var(--color-border); border-radius: 8px; text-decoration: none; color: var(--color-primary-navy); font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+              <i class="fa-regular fa-envelope" style="color: var(--color-accent-amber);"></i> Gửi Email CSKH
+            </a>
+            <button type="button" onclick="closeSupportModal(); openOrderTrackingModal();" style="flex: 1; text-align: center; padding: 10px; background: #ffffff; border: 1px solid var(--color-border); border-radius: 8px; color: var(--color-primary-navy); font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+              <i class="fa-solid fa-truck-fast" style="color: var(--color-accent-amber);"></i> Tra cứu đơn hàng
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function openSupportModal() {
+  ensureSupportModalExists();
+  const modal = document.getElementById('customer-support-modal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeSupportModal() {
+  const modal = document.getElementById('customer-support-modal');
+  if (modal) modal.classList.remove('active');
+}
+
 function showToastNotification(message, iconClass = 'fa-solid fa-circle-check') {
 
   let toast = document.getElementById('woodluxe-global-toast');
@@ -1323,17 +1598,17 @@ function renderSpecialOffersGrid(tabName) {
 
   }
 
-  grid.style.opacity = '0';
-
-  grid.style.transition = 'opacity 0.2s ease';
-
-  setTimeout(() => {
-
+  if (!grid.children || grid.children.length === 0) {
     grid.innerHTML = items.map(p => createProductCardHtml(p)).join('');
-
     grid.style.opacity = '1';
-
-  }, 100);
+  } else {
+    grid.style.opacity = '0';
+    grid.style.transition = 'opacity 0.2s ease';
+    setTimeout(() => {
+      grid.innerHTML = items.map(p => createProductCardHtml(p)).join('');
+      grid.style.opacity = '1';
+    }, 100);
+  }
 
 }
 
@@ -1800,434 +2075,337 @@ let selectedModalColor = null;
 let selectedModalSize = null;
 
 function openProductModal(productId) {
-
   const product = PRODUCTS_DATA.find(p => p.id === productId);
-
   if (!product) return;
 
   currentModalProduct = product;
-
   selectedModalColor = product.colors ? product.colors[0] : null;
-
   selectedModalSize = product.sizes ? product.sizes[0] : null;
 
   const modal = document.getElementById('product-detail-modal');
-
   const content = document.getElementById('pdp-modal-content');
-
   if (!modal || !content) return;
 
-  const currentPrice = product.salePrice || product.regularPrice;
-
-  const hasSale = product.salePrice != null;
+  const initialVar = getProductVariation(product, selectedModalColor, selectedModalSize);
+  const currentPrice = initialVar ? (initialVar.salePrice || initialVar.regularPrice) : (product.salePrice || product.regularPrice);
+  const regularPrice = initialVar ? initialVar.regularPrice : product.regularPrice;
+  const hasSale = initialVar ? (initialVar.salePrice != null) : (product.salePrice != null);
+  const initialSku = initialVar ? initialVar.sku : product.sku;
+  const initialStock = initialVar ? initialVar.stockQuantity : product.stockQuantity;
 
   content.innerHTML = `
-
     <div class="pdp-layout">
-
       <div class="pdp-gallery-col">
-
         <img id="pdp-main-img" class="pdp-gallery-img" src="${product.image}" alt="${product.name}" />
-
       </div>
-
       <div class="pdp-details-col">
-
         <div class="pdp-meta-row">
-
           <span>DANH MỤC: <strong>${CATEGORY_MAP_VI[product.category] || product.category}</strong></span>
-
           <span>•</span>
-
-          <span>SKU: <strong id="pdp-sku-display">${product.sku}</strong></span>
-
+          <span>SKU: <strong id="pdp-sku-display">${initialSku}</strong></span>
           <span>•</span>
-
-          <span>KHO: <strong style="color: var(--color-success-green)"><i class="fa-solid fa-check"></i> Còn ${product.stockQuantity} sản phẩm</strong></span>
-
+          <span>KHO: <strong id="pdp-stock-display" style="color: var(--color-success-green)"><i class="fa-solid fa-check"></i> Còn ${initialStock} sản phẩm</strong></span>
         </div>
-
         <h2 class="pdp-title">${product.name}</h2>
-
         <div style="margin-bottom: 14px;">
-
           ${renderProductRatingHTML(product, true)}
-
         </div>
-
-        <div class="pdp-price-wrap">
-
+        <div class="pdp-price-wrap" id="pdp-price-wrap">
           <span class="pdp-price-current" id="pdp-price-display">${formatVND(currentPrice)}</span>
-
-          ${hasSale ? `<span class="price-regular-strike" style="font-size: 16px;">${formatVND(product.regularPrice)}</span>` : ''}
-
+          ${hasSale ? `<span class="price-regular-strike" id="pdp-strike-display" style="font-size: 16px;">${formatVND(regularPrice)}</span>` : ''}
         </div>
-
         <p class="pdp-short-desc">${product.shortDesc}</p>
 
         <!-- Variable Colors -->
-
         ${product.colors && product.colors.length > 0 ? `
-
           <div class="pdp-attribute-section">
-
             <span class="attribute-label">MÀU SẮC: <strong id="selected-color-label">${selectedModalColor}</strong></span>
-
             <div class="pdp-color-picker">
-
-              ${product.colors.map(c => `
-
-                <button class="pdp-variation-btn ${c === selectedModalColor ? 'active' : ''}" onclick="selectModalColor('${c}')">${c}</button>
-
+              ${product.colors.map((c, i) => `
+                <button type="button" class="pdp-variation-btn ${i === 0 ? 'active' : ''}" onclick="selectModalColor('${c}')">
+                  ${c}
+                </button>
               `).join('')}
-
             </div>
-
           </div>
-
         ` : ''}
 
         <!-- Variable Sizes -->
-
         ${product.sizes && product.sizes.length > 0 ? `
-
           <div class="pdp-attribute-section">
-
             <span class="attribute-label">KÍCH THƯỚC: <strong id="selected-size-label">${selectedModalSize}</strong></span>
-
             <div class="pdp-size-picker">
-
-              ${product.sizes.map(s => `
-
-                <button class="pdp-variation-btn ${s === selectedModalSize ? 'active' : ''}" onclick="selectModalSize('${s}')">${s}</button>
-
+              ${product.sizes.map((s, i) => `
+                <button type="button" class="pdp-variation-btn ${i === 0 ? 'active' : ''}" onclick="selectModalSize('${s}')">
+                  ${s}
+                </button>
               `).join('')}
-
             </div>
-
           </div>
-
         ` : ''}
 
         <!-- Quantity & Add to Cart -->
-
-        <div class="pdp-action-row">
-
-          <div class="qty-stepper">
-
-            <button class="qty-btn" onclick="stepModalQty(-1)"><i class="fa-solid fa-minus"></i></button>
-
-            <input type="text" id="modal-qty-input" class="qty-input" value="1" readonly />
-
-            <button class="qty-btn" onclick="stepModalQty(1)"><i class="fa-solid fa-plus"></i></button>
-
+        <div class="pdp-actions-row">
+          <div class="pdp-qty-stepper">
+            <button type="button" class="btn-qty-step" onclick="stepModalQty(-1)">−</button>
+            <input type="number" id="modal-qty-input" class="qty-field" value="1" min="1" max="20" />
+            <button type="button" class="btn-qty-step" onclick="stepModalQty(1)">+</button>
           </div>
-
-          <button class="btn-pdp-add-cart" onclick="addModalProductToCart()">
-
-            <i class="hgi-stroke hgi-shopping-bag-02" style="font-size: 18px;"></i> Thêm vào giỏ hàng
-
+          <button type="button" class="btn-primary btn-pdp-add-cart" id="modal-add-cart-btn" onclick="addModalProductToCart()">
+            <i class="hgi-stroke hgi-shopping-bag-02"></i>
+            <span>THÊM VÀO GIỎ HÀNG</span>
           </button>
-
         </div>
-
       </div>
-
     </div>
 
-    <!-- Details & Specs Tabs -->
-
+    <!-- Product Tabs (Mô tả, Thông số, Đánh giá) -->
     <div class="pdp-tabs-container">
-
-      <div class="pdp-tab-nav">
-
-        <span class="pdp-tab-item active" onclick="switchPdpTab('desc')"><i class="fa-solid fa-circle-info"></i> Mô tả sản phẩm</span>
-
-        <span class="pdp-tab-item" onclick="switchPdpTab('specs')"><i class="fa-solid fa-sliders"></i> Thông số kỹ thuật</span>
-
-        <span class="pdp-tab-item" onclick="switchPdpTab('reviews')"><i class="fa-solid fa-comments"></i> Đánh giá (<span id="modal-tab-reviews-count-${product.id}">${product.reviewsCount + (APP_STATE.userRatings[product.id]?.countAdded ? 1 : 0)}</span>)</span>
-
+      <div class="pdp-tabs-nav">
+        <button type="button" class="pdp-tab-item active" onclick="switchPdpTab('desc')">
+          <i class="fa-solid fa-circle-info"></i> Mô tả sản phẩm
+        </button>
+        <button type="button" class="pdp-tab-item" onclick="switchPdpTab('specs')">
+          <i class="fa-solid fa-sliders"></i> Thông số kỹ thuật
+        </button>
+        <button type="button" class="pdp-tab-item" onclick="switchPdpTab('reviews')">
+          <i class="fa-solid fa-comments"></i> Đánh giá ( ${product.reviewsCount} )
+        </button>
       </div>
 
-      <div id="pdp-pane-desc" class="pdp-tab-pane active">
-
-        <p>${product.desc}</p>
-
-      </div>
-
-      <div id="pdp-pane-specs" class="pdp-tab-pane">
-
-        <table style="width: 100%; border-collapse: collapse;">
-
-          ${Object.entries(product.specs || {}).map(([key, val]) => `
-
-            <tr>
-
-              <td style="padding: 8px; border-bottom: 1px solid #edf2f7; font-weight: 700; width: 35%;">${key}</td>
-
-              <td style="padding: 8px; border-bottom: 1px solid #edf2f7;">${val}</td>
-
-            </tr>
-
-          `).join('')}
-
-        </table>
-
-      </div>
-
-      <div id="pdp-pane-reviews" class="pdp-tab-pane">
-
-        <!-- Interactive Review Form -->
-
-        <div style="background: #ffffff; border: 1px solid var(--color-border); border-radius: 8px; padding: 18px; margin-bottom: 20px;">
-
-          <h4 style="font-size: 14px; font-weight: 700; color: var(--color-primary-navy); margin-bottom: 6px;">Đánh giá của bạn về sản phẩm này</h4>
-
-          <p style="font-size: 12px; color: var(--color-text-muted); margin-bottom: 10px;">Bấm chọn số sao và nhập cảm nhận:</p>
-
-          <div style="margin-bottom: 12px;">
-
-            ${renderProductRatingHTML(product, false)}
-
+      <div class="pdp-tabs-content">
+        <div class="pdp-tab-pane active" id="pdp-pane-desc">
+          <div class="pdp-desc-text">
+            <p>${product.desc}</p>
+            ${product.designerStory ? `
+              <div style="margin-top: 20px; padding: 16px; background: #fdfbf7; border-left: 3px solid var(--color-accent-amber); border-radius: var(--radius-sm);">
+                <strong style="color: var(--color-primary-navy); display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-compass-drafting" style="color: var(--color-accent-amber);"></i> Câu chuyện chế tác
+                </strong>
+                <p style="margin-top: 6px; font-size: 13px; color: var(--color-text-muted);">${product.designerStory}</p>
+              </div>
+            ` : ''}
           </div>
-
-          <div style="display: flex; gap: 10px;">
-
-            <input type="text" id="review-comment-input-${product.id}" class="form-control" placeholder="Viết cảm nhận của bạn về sản phẩm..." style="font-size: 13px;" />
-
-            <button class="btn-primary" style="padding: 8px 16px; font-size: 12px; white-space: nowrap;" onclick="submitPdpReviewText(${product.id})">
-
-              <i class="fa-solid fa-paper-plane"></i> Gửi
-
-            </button>
-
-          </div>
-
         </div>
 
-        <p style="color: #6b7280; margin-bottom: 12px; font-size: 13px;">Đánh giá thực tế từ khách hàng đã mua sản phẩm:</p>
-
-        <div id="pdp-reviews-list-${product.id}">
-
-          <div style="background: #f8f9fa; padding: 14px; border-radius: 6px; margin-bottom: 10px;">
-
-            <div style="color: var(--color-star-yellow); margin-bottom: 4px;">
-
-              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-
-            </div>
-
-            <strong>Trần Hoàng Nam (Kiến trúc sư)</strong> — <em>Chất liệu vải rất êm, giao hàng tận nơi lắp đặt chuyên nghiệp.</em>
-
-          </div>
-
-          <div style="background: #f8f9fa; padding: 14px; border-radius: 6px;">
-
-            <div style="color: var(--color-star-yellow); margin-bottom: 4px;">
-
-              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-
-            </div>
-
-            <strong>Lê Minh Anh</strong> — <em>Xứng đáng từng đồng, màu sắc bên ngoài đẹp hơn cả trong ảnh.</em>
-
-          </div>
-
+        <div class="pdp-tab-pane" id="pdp-pane-specs">
+          <table class="pdp-specs-table">
+            <tbody>
+              ${Object.entries(product.specs || {}).map(([key, val]) => `
+                <tr>
+                  <th>${key}</th>
+                  <td>${val}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
         </div>
 
+        <div class="pdp-tab-pane" id="pdp-pane-reviews">
+          <div class="pdp-reviews-box">
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--color-border); flex-wrap: wrap;">
+              <div style="text-align: center; min-width: 120px;">
+                <div style="font-size: 42px; font-weight: 800; color: var(--color-primary-navy); line-height: 1;">${product.rating || 5.0}</div>
+                <div style="color: var(--color-accent-amber); font-size: 14px; margin: 4px 0;">
+                  ${'<i class="fa-solid fa-star"></i>'.repeat(Math.round(product.rating || 5))}
+                </div>
+                <div style="font-size: 12px; color: var(--color-text-muted);">${product.reviewsCount} nhận xét</div>
+              </div>
+              <div style="flex: 1;">
+                <p style="margin: 0; font-size: 13px; color: var(--color-text-main);">
+                  Tất cả các đánh giá đều từ khách hàng đã mua và trải nghiệm thực tế nội thất WOODLUXE.
+                </p>
+                <div style="margin-top: 8px;">
+                  ${renderProductRatingHTML(product, true)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
     </div>
-
   `;
 
   modal.classList.add('active');
-
+  document.body.style.overflow = 'hidden';
+  updateModalVariationUI();
 }
 
 function closeProductModal() {
-
   const modal = document.getElementById('product-detail-modal');
-
   if (modal) modal.classList.remove('active');
-
+  document.body.style.overflow = '';
+  currentModalProduct = null;
 }
 
 function selectModalColor(color) {
-
   selectedModalColor = color;
-
   const label = document.getElementById('selected-color-label');
-
   if (label) label.textContent = color;
-
   document.querySelectorAll('.pdp-color-picker .pdp-variation-btn').forEach(btn => {
-
-    btn.classList.toggle('active', btn.textContent === color);
-
+    btn.classList.toggle('active', btn.textContent.trim() === color);
   });
-
-  updateVariationSKU();
-
+  updateModalVariationUI();
 }
 
 function selectModalSize(size) {
-
   selectedModalSize = size;
-
   const label = document.getElementById('selected-size-label');
-
   if (label) label.textContent = size;
-
   document.querySelectorAll('.pdp-size-picker .pdp-variation-btn').forEach(btn => {
-
-    btn.classList.toggle('active', btn.textContent === size);
-
+    btn.classList.toggle('active', btn.textContent.trim() === size);
   });
+  updateModalVariationUI();
+}
 
-  updateVariationSKU();
+function updateModalVariationUI() {
+  if (!currentModalProduct) return;
+  const variation = getProductVariation(currentModalProduct, selectedModalColor, selectedModalSize);
+  if (!variation) return;
 
+  // 1. Update SKU
+  const skuEl = document.getElementById('pdp-sku-display');
+  if (skuEl) skuEl.textContent = variation.sku;
+
+  // 2. Update Price
+  const priceDisplay = document.getElementById('pdp-price-display');
+  const priceWrap = document.getElementById('pdp-price-wrap');
+  const currentPrice = variation.salePrice || variation.regularPrice;
+  const hasSale = variation.salePrice != null;
+
+  if (priceDisplay) {
+    priceDisplay.textContent = formatVND(currentPrice);
+  }
+  if (priceWrap) {
+    let strikeEl = document.getElementById('pdp-strike-display');
+    if (hasSale) {
+      if (strikeEl) {
+        strikeEl.textContent = formatVND(variation.regularPrice);
+      } else {
+        strikeEl = document.createElement('span');
+        strikeEl.className = 'price-regular-strike';
+        strikeEl.id = 'pdp-strike-display';
+        strikeEl.style.fontSize = '16px';
+        strikeEl.textContent = formatVND(variation.regularPrice);
+        priceWrap.appendChild(strikeEl);
+      }
+    } else if (strikeEl) {
+      strikeEl.remove();
+    }
+  }
+
+  // 3. Update Stock
+  const stockEl = document.getElementById('pdp-stock-display');
+  const addBtn = document.getElementById('modal-add-cart-btn');
+  if (stockEl) {
+    if (variation.stockQuantity > 0) {
+      stockEl.innerHTML = `<i class="fa-solid fa-check"></i> Còn ${variation.stockQuantity} sản phẩm`;
+      stockEl.style.color = 'var(--color-success-green)';
+      if (addBtn) {
+        addBtn.disabled = false;
+        addBtn.innerHTML = '<i class="hgi-stroke hgi-shopping-bag-02"></i><span>THÊM VÀO GIỎ HÀNG</span>';
+        addBtn.style.opacity = '1';
+        addBtn.style.cursor = 'pointer';
+      }
+    } else {
+      stockEl.innerHTML = `<i class="fa-solid fa-xmark"></i> Hết hàng tạm thời`;
+      stockEl.style.color = 'var(--color-sale-red)';
+      if (addBtn) {
+        addBtn.disabled = true;
+        addBtn.innerHTML = '<i class="fa-solid fa-ban"></i><span>HẾT HÀNG</span>';
+        addBtn.style.opacity = '0.6';
+        addBtn.style.cursor = 'not-allowed';
+      }
+    }
+  }
 }
 
 function updateVariationSKU() {
-
-  if (!currentModalProduct) return;
-
-  const skuEl = document.getElementById('pdp-sku-display');
-
-  if (!skuEl) return;
-
-  const colorCode = selectedModalColor ? selectedModalColor.substring(0, 3).toUpperCase() : 'DEF';
-
-  const sizeCode = selectedModalSize ? selectedModalSize.substring(0, 3).toUpperCase() : 'STD';
-
-  skuEl.textContent = `${currentModalProduct.sku}-${colorCode}-${sizeCode}`;
-
+  updateModalVariationUI();
 }
 
 function stepModalQty(delta) {
-
   const input = document.getElementById('modal-qty-input');
-
   if (!input) return;
-
   let val = parseInt(input.value) + delta;
-
   if (val < 1) val = 1;
-
   if (val > 20) val = 20;
-
   input.value = val;
-
 }
 
 function switchPdpTab(paneName) {
-
   document.querySelectorAll('.pdp-tab-item').forEach((item, idx) => {
-
     const isTarget = (paneName === 'desc' && idx === 0) || (paneName === 'specs' && idx === 1) || (paneName === 'reviews' && idx === 2);
-
     item.classList.toggle('active', isTarget);
-
   });
-
   document.querySelectorAll('.pdp-tab-pane').forEach(pane => pane.classList.remove('active'));
-
   const target = document.getElementById(`pdp-pane-${paneName}`);
-
   if (target) target.classList.add('active');
-
 }
 
 /* ==========================================================================
-
    CART ENGINE & LOCAL STORAGE
-
    ========================================================================== */
-
 function quickAddToCart(productId) {
-
   const product = PRODUCTS_DATA.find(p => p.id === productId);
-
   if (!product) return;
-
   const color = product.colors ? product.colors[0] : null;
-
   const size = product.sizes ? product.sizes[0] : null;
-
-  addToCart(product, 1, color, size);
-
+  const variation = getProductVariation(product, color, size);
+  const activePrice = variation ? (variation.salePrice || variation.regularPrice) : (product.salePrice || product.regularPrice);
+  const activeSku = variation ? variation.sku : product.sku;
+  addToCart(product, 1, color, size, activePrice, activeSku);
 }
 
 function addModalProductToCart() {
-
   if (!currentModalProduct) return;
-
   const qtyInput = document.getElementById('modal-qty-input');
-
   const qty = qtyInput ? parseInt(qtyInput.value) : 1;
-
-  addToCart(currentModalProduct, qty, selectedModalColor, selectedModalSize);
-
+  const variation = getProductVariation(currentModalProduct, selectedModalColor, selectedModalSize);
+  const activePrice = variation ? (variation.salePrice || variation.regularPrice) : (currentModalProduct.salePrice || currentModalProduct.regularPrice);
+  const activeSku = variation ? variation.sku : currentModalProduct.sku;
+  addToCart(currentModalProduct, qty, selectedModalColor, selectedModalSize, activePrice, activeSku);
   closeProductModal();
-
 }
 
-function addToCart(product, quantity, color, size) {
-
+function addToCart(product, quantity, color, size, customPrice = null, customSku = null) {
   if (!APP_STATE.currentUser) {
-
     requireAuth('Vui lòng đăng nhập để lưu sản phẩm vào giỏ hàng!', () => {
-
-      addToCart(product, quantity, color, size);
-
+      addToCart(product, quantity, color, size, customPrice, customSku);
     });
-
     return;
-
   }
 
-  const variationKey = `${product.id}_${color || 'none'}_${size || 'none'}`;
+  const variation = getProductVariation(product, color, size);
+  const activePrice = customPrice !== null ? customPrice : (variation ? (variation.salePrice || variation.regularPrice) : (product.salePrice || product.regularPrice));
+  const activeSku = customSku || (variation ? variation.sku : product.sku);
 
+  const variationKey = `${product.id}_${color || 'none'}_${size || 'none'}`;
   const existingIndex = APP_STATE.cart.findIndex(item => item.variationKey === variationKey);
 
   if (existingIndex > -1) {
-
     APP_STATE.cart[existingIndex].quantity += quantity;
-
+    APP_STATE.cart[existingIndex].price = activePrice; // keep price fresh
   } else {
-
     APP_STATE.cart.push({
-
       id: product.id,
-
       variationKey: variationKey,
-
       name: product.name,
-
       image: product.image,
-
-      price: product.salePrice || product.regularPrice,
-
+      price: activePrice,
+      sku: activeSku,
       color: color,
-
       size: size,
-
       quantity: quantity,
-
       selected: true
-
     });
-
   }
 
   saveCart();
-
   updateCartUI();
-
   openCartDrawer();
-
 }
+
 
 function updateCartItemQty(variationKey, delta) {
 
@@ -2517,7 +2695,7 @@ function applyCouponCode() {
 
     localStorage.setItem('woodluxe_applied_coupon', JSON.stringify(APP_STATE.coupon));
 
-    alert('Áp dụng thành công mã giảm giá WOODLUXE10 (-10% tổng đơn hàng)!');
+    showCustomAlertPopup('Áp dụng thành công mã giảm giá WOODLUXE10 (-10% tổng đơn hàng)!', 'Áp Dụng Khuyến Mãi', 'success');
 
     updateCartUI();
 
@@ -2529,7 +2707,7 @@ function applyCouponCode() {
 
     localStorage.setItem('woodluxe_applied_coupon', JSON.stringify(APP_STATE.coupon));
 
-    alert('Áp dụng mã miễn phí vận chuyển thành công!');
+    showCustomAlertPopup('Áp dụng mã miễn phí vận chuyển thành công!', 'Ưu Đãi Vận Chuyển', 'success');
 
     updateCartUI();
 
@@ -2537,7 +2715,7 @@ function applyCouponCode() {
 
   } else {
 
-    alert('Mã giảm giá không hợp lệ. Hãy thử: WOODLUXE10 hoặc FREESHIP');
+    showCustomAlertPopup('Mã giảm giá không hợp lệ. Hãy thử: WOODLUXE10 hoặc FREESHIP', 'Mã Không Hợp Lệ', 'warning');
 
   }
 
@@ -2750,21 +2928,18 @@ function addAllWishlistToCart() {
 }
 
 function clearAllWishlist() {
-
-  if (!confirm('Bạn có chắc chắn muốn xóa toàn bộ danh sách yêu thích?')) return;
-
-  APP_STATE.wishlist = [];
-
-  saveWishlist();
-
-  loadUserOrders();
-
-  updateWishlistUI();
-
-  renderWishlistPage();
-
-  showToastNotification('Đã xóa toàn bộ danh sách yêu thích.', 'fa-solid fa-trash-can');
-
+  showCustomConfirmModal(
+    'Bạn có chắc chắn muốn xóa toàn bộ sản phẩm khỏi danh sách yêu thích?',
+    'Xóa Danh Sách Yêu Thích',
+    () => {
+      APP_STATE.wishlist = [];
+      saveWishlist();
+      loadUserOrders();
+      updateWishlistUI();
+      renderWishlistPage();
+      showToastNotification('Đã xóa toàn bộ danh sách yêu thích.', 'fa-solid fa-trash-can');
+    }
+  );
 }
 
 /* ==========================================================================
@@ -3032,9 +3207,7 @@ function applyCheckoutCoupon() {
     renderCheckoutSummary();
 
   } else {
-
-    alert('Mã voucher không hợp lệ. Vui lòng kiểm tra lại trong Ví voucher của bạn.');
-
+    showCustomAlertPopup('Mã voucher không hợp lệ. Vui lòng kiểm tra lại trong Ví voucher của bạn.', 'Mã Voucher', 'warning');
   }
 
 }
@@ -3256,13 +3429,9 @@ function submitCheckoutOrder(e) {
   const checkoutItems = APP_STATE.cart.filter(item => item.selected !== false);
 
   if (checkoutItems.length === 0) {
-
-    alert('Không có sản phẩm nào được chọn để thanh toán! Vui lòng quay lại giỏ hàng.');
-
+    showCustomAlertPopup('Không có sản phẩm nào được chọn để thanh toán! Vui lòng quay lại giỏ hàng.', 'Chưa Chọn Sản Phẩm', 'info');
     window.location.href = 'cart.html';
-
     return;
-
   }
 
   const nameInput = document.getElementById('checkout-name');
@@ -3292,11 +3461,8 @@ function submitCheckoutOrder(e) {
   });
 
   if (hasError) {
-
-    alert('Vui lòng điền đầy đủ tất cả các trường thông tin bắt buộc.');
-
+    showCustomAlertPopup('Vui lòng điền đầy đủ tất cả các trường thông tin nhận hàng bắt buộc (*).', 'Thiếu Thông Tin', 'warning');
     return;
-
   }
 
   // Payment method
@@ -3347,38 +3513,30 @@ function submitCheckoutOrder(e) {
   const baseEarned = Math.floor(total / POINT_EARN_SPEND_UNIT);
   const earnedPoints = Math.floor(baseEarned * tier.multiplier);
 
-  // Generate order
-
-  const orderId = `WLX-20261026-${Math.floor(1000 + Math.random() * 9000)}`;
+  // Generate order dynamically based on current date
+  const now = new Date();
+  const yearStr = now.getFullYear();
+  const monthStr = String(now.getMonth() + 1).padStart(2, '0');
+  const dayStr = String(now.getDate()).padStart(2, '0');
+  const randSeq = Math.floor(1000 + Math.random() * 9000);
+  const orderId = `WLX-${yearStr}${monthStr}${dayStr}-${randSeq}`;
 
   const orderObj = {
-
     orderId: orderId,
-
-    date: new Date().toLocaleDateString('vi-VN'),
-
+    id: orderId,
+    code: orderId,
+    date: `${dayStr}/${monthStr}/${yearStr}`,
     customerName: nameInput.value.trim(),
-
     phone: phoneInput.value.trim(),
-
     email: emailInput.value.trim(),
-
     address: addressInput.value.trim(),
-
     paymentMethod: paymentMethod,
-
     items: [...checkoutItems],
-
     total: total,
-
     usedPoints: usedPoints,
-
     pointsDiscount: pointsDiscount,
-
     earnedPoints: earnedPoints,
-
-    status: 'Đang xử lý'
-
+    status: 'processing'
   };
 
   // Deduct used points:
@@ -3934,25 +4092,178 @@ function closeLiveSearch() {
 }
 
 /* ==========================================================================
+   MULTI-CURRENCY SWITCHER (VND / USD)
+   ========================================================================== */
 
-   HARNESS AUTOMATED IN-BROWSER TEST RUNNER (20 TEST CASES)
+function changeCurrency(currency) {
+  localStorage.setItem('woodluxe_currency', currency);
+  document.querySelectorAll('#currency-selector, .currency-selector').forEach(sel => {
+    sel.value = currency;
+  });
+  showToastNotification(`Đã chuyển đổi sang mệnh giá: ${currency === 'USD' ? 'USD ($)' : 'VNĐ (Việt Nam)'}`, 'fa-solid fa-coins');
+  
+  // Instantly re-render active page views
+  refreshCurrentPagePrices();
 
+  // Automatically refresh window after 350ms so user NEVER has to manually press F5
+  setTimeout(() => {
+    window.location.reload();
+  }, 350);
+}
+
+function initCurrency() {
+  const cur = typeof getCurrentCurrency === 'function' ? getCurrentCurrency() : (localStorage.getItem('woodluxe_currency') || 'VND');
+  document.querySelectorAll('#currency-selector, .currency-selector').forEach(sel => {
+    sel.value = cur;
+  });
+}
+
+function refreshCurrentPagePrices() {
+  // Update header cart badge and cart drawer
+  if (typeof updateCartUI === 'function') updateCartUI();
+  if (typeof updateCartBadge === 'function') updateCartBadge();
+  
+  // Home page components
+  if (typeof renderShowcaseSections === 'function' && (document.getElementById('sale-spotlight-content') || document.getElementById('special-offers-grid') || document.getElementById('home-deals'))) {
+    renderShowcaseSections();
+  }
+  
+  // Shop page
+  if (typeof renderShopCatalog === 'function' && document.getElementById('shop-products-grid')) {
+    renderShopCatalog();
+  }
+  
+  // Standalone PDP page
+  if (typeof renderStandalonePDP === 'function' && (document.getElementById('pdp-standalone-container') || document.getElementById('standalone-pdp-container'))) {
+    renderStandalonePDP();
+  }
+  
+  // Cart page
+  if (typeof renderCartPageTable === 'function' && document.getElementById('cart-page-table-body')) {
+    renderCartPageTable();
+  }
+  
+  // Checkout page
+  if (typeof renderCheckoutSummary === 'function' && document.getElementById('checkout-items-summary')) {
+    renderCheckoutSummary();
+  }
+  
+  // Wishlist page
+  if (typeof renderWishlistPage === 'function' && document.getElementById('wishlist-page-table-body')) {
+    renderWishlistPage();
+  }
+  
+  // Account page
+  if (typeof renderAccountOrders === 'function') {
+    renderAccountOrders();
+  }
+  if (typeof renderLoyaltyTab === 'function' && (document.getElementById('loyalty-balance-val') || document.querySelector('.account-layout'))) {
+    renderLoyaltyTab();
+  }
+  if (typeof updateAccountStats === 'function') {
+    updateAccountStats();
+  }
+  
+  // Variations in quickview or PDP
+  if (typeof updateModalVariationUI === 'function') updateModalVariationUI();
+  if (typeof updateStandaloneVariationUI === 'function') updateStandaloneVariationUI();
+
+  // Admin page
+  if (typeof renderOrdersTable === 'function' && document.getElementById('admin-orders-tbody')) {
+    renderOrdersTable();
+  }
+  if (typeof renderProductsTable === 'function' && document.getElementById('admin-products-tbody')) {
+    renderProductsTable();
+  }
+  if (typeof renderOverviewTab === 'function' && document.getElementById('stat-revenue')) {
+    renderOverviewTab();
+  }
+}
+
+/* ==========================================================================
+   CONSULTATION POPUP MODAL (ĐĂNG KÝ TƯ VẤN KHÔNG GIAN SỐNG)
+   ========================================================================== */
+
+function openConsultationModal(category) {
+  const modal = document.getElementById('consultation-modal');
+  if (!modal) return;
+  modal.classList.add('active');
+
+  // Pre-fill user data if logged in
+  if (APP_STATE && APP_STATE.currentUser) {
+    const u = APP_STATE.currentUser;
+    const nameInput = document.getElementById('consult-name');
+    const phoneInput = document.getElementById('consult-phone');
+    const emailInput = document.getElementById('consult-email');
+    if (nameInput && !nameInput.value) nameInput.value = u.name || '';
+    if (phoneInput && !phoneInput.value) phoneInput.value = u.phone || '';
+    if (emailInput && !emailInput.value) emailInput.value = u.email || '';
+  }
+
+  if (category) {
+    const catSelect = document.getElementById('consult-category');
+    if (catSelect) catSelect.value = category;
+  }
+}
+
+function closeConsultationModal() {
+  const modal = document.getElementById('consultation-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function handleConsultationSubmit(e) {
+  if (e) e.preventDefault();
+  const name = (document.getElementById('consult-name')?.value || '').trim();
+  const phone = (document.getElementById('consult-phone')?.value || '').trim();
+  const email = (document.getElementById('consult-email')?.value || '').trim();
+  const category = document.getElementById('consult-category')?.value || 'Tư vấn căn hộ trọn gói';
+  const style = document.getElementById('consult-style')?.value || 'Scandinavian (Bắc Âu)';
+  const notes = (document.getElementById('consult-notes')?.value || '').trim();
+
+  if (!name || !phone) {
+    showToastNotification('Vui lòng điền Họ tên và Số điện thoại để chuyên viên liên hệ!', 'fa-solid fa-circle-exclamation');
+    return;
+  }
+
+  const newLead = {
+    id: 'CS-' + Date.now(),
+    name,
+    phone,
+    email,
+    category,
+    style,
+    notes,
+    status: 'pending', // pending | contacted | completed
+    createdAt: new Date().toISOString()
+  };
+
+  let list = [];
+  try {
+    list = JSON.parse(localStorage.getItem('woodluxe_consultations')) || [];
+  } catch (err) {
+    list = [];
+  }
+  list.unshift(newLead);
+  localStorage.setItem('woodluxe_consultations', JSON.stringify(list));
+
+  closeConsultationModal();
+  showToastNotification(`Cảm ơn ${name}! WOODLUXE đã ghi nhận yêu cầu tư vấn và sẽ liên hệ qua SĐT ${phone} trong 15 phút.`, 'fa-solid fa-circle-check');
+
+  const form = document.getElementById('consultation-form');
+  if (form) form.reset();
+}
+
+/* ==========================================================================
+   KIỂM THỬ (ĐÃ LOẠI BỎ THEO YÊU CẦU - GIỮ STUB AN TOÀN)
    ========================================================================== */
 
 function openTestRunnerModal() {
-
-  const modal = document.getElementById('test-runner-modal');
-
-  if (modal) modal.classList.add('active');
-
+  console.info('Giao diện kiểm thử chất lượng đã được loại bỏ theo yêu cầu.');
 }
 
 function closeTestRunnerModal() {
-
   const modal = document.getElementById('test-runner-modal');
-
   if (modal) modal.classList.remove('active');
-
 }
 
 function runAllAcceptanceTests() {
@@ -4245,6 +4556,14 @@ function updateUserHeaderUI() {
 
           <div class="user-dropdown-divider"></div>
 
+          ${(user.role === 'admin' || user.role === 'manager') ? `
+          <a href="admin.html" class="user-dropdown-item" style="color: #b45309; font-weight: 700; background: #fef3c7;">
+            <i class="fa-solid fa-gauge-high" style="color: #d97706;"></i>
+            <span>${user.role === 'admin' ? 'Trang Quản Trị (Admin)' : 'Trang Quản Lý (Manager)'}</span>
+          </a>
+          <div class="user-dropdown-divider"></div>
+          ` : ''}
+
           <a href="account.html" class="user-dropdown-item">
 
             <i class="fa-regular fa-id-badge"></i>
@@ -4284,23 +4603,30 @@ function updateUserHeaderUI() {
       </div>
 
     `;
-
   } else {
-
     container.innerHTML = `
-
       <a href="auth.html" class="action-item" title="Đăng nhập / Đăng ký">
-
         <i class="hgi-stroke hgi-user"></i>
-
         <span>Đăng nhập</span>
-
       </a>
-
     `;
-
   }
 
+  // Top Notice Bar Admin/Manager Portal indicator
+  const topNoticeRight = document.querySelector('.top-notice-right');
+  const existingPortalLink = document.getElementById('header-admin-portal-link');
+  if (user && (user.role === 'admin' || user.role === 'manager')) {
+    if (topNoticeRight && !existingPortalLink) {
+      const link = document.createElement('a');
+      link.id = 'header-admin-portal-link';
+      link.href = 'admin.html';
+      link.style.cssText = 'background: #d97706; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-right: 6px;';
+      link.innerHTML = `<i class="fa-solid fa-gauge-high"></i> ${user.role === 'admin' ? 'ADMIN PORTAL' : 'MANAGER PORTAL'}`;
+      topNoticeRight.insertBefore(link, topNoticeRight.firstChild);
+    }
+  } else {
+    if (existingPortalLink) existingPortalLink.remove();
+  }
 }
 
 function toggleUserDropdown(event) {
@@ -4426,67 +4752,57 @@ function switchAuthTab(tabName) {
 }
 
 function ensureDefaultUsersSeeded() {
-
   let registered = [];
-
   try {
-
     registered = JSON.parse(localStorage.getItem('woodluxe_registered_users')) || [];
-
   } catch (err) {
-
     registered = [];
-
   }
 
-  if (!registered || registered.length === 0) {
-
-    registered = [
-
-      {
-
-        name: 'Nguyễn Văn Nam',
-
-        username: 'namnguyen',
-
-        email: 'nam.nguyen@woodluxe.vn',
-
-        phone: '0908 123 456',
-
-        password: '123456',
-
-        address: 'Vinhomes Central Park, Quận Bình Thạnh, TP. Hồ Chí Minh',
-
-        role: 'customer'
-
-      },
-
-      {
-
-        name: 'Quản Trị Viên WOODLUXE',
-
-        username: 'admin',
-
-        email: 'admin@woodluxe.vn',
-
-        phone: '0901 888 999',
-
-        password: '123456',
-
-        address: 'Tòa nhà WOODLUXE, 88 Đồng Khởi, Q.1, TP. HCM',
-
-        role: 'admin'
-
-      }
-
-    ];
-
-    localStorage.setItem('woodluxe_registered_users', JSON.stringify(registered));
-
+  // Ensure default admin exists
+  const hasAdmin = registered.some(u => (u.username === 'admin' || u.email === 'admin@woodluxe.vn'));
+  if (!hasAdmin) {
+    registered.push({
+      name: 'Quản Trị Viên WOODLUXE',
+      username: 'admin',
+      email: 'admin@woodluxe.vn',
+      phone: '0901 888 999',
+      password: '123456',
+      address: 'Tòa nhà WOODLUXE, 88 Đồng Khởi, Q.1, TP. HCM',
+      role: 'admin'
+    });
   }
 
+  // Ensure default manager exists
+  const hasManager = registered.some(u => (u.username === 'manager' || u.email === 'manager@woodluxe.vn'));
+  if (!hasManager) {
+    registered.push({
+      name: 'Trần Quản Lý (Operations)',
+      username: 'manager',
+      email: 'manager@woodluxe.vn',
+      phone: '0909 333 444',
+      password: '123456',
+      address: 'Showroom WOODLUXE, Trâu Quỳ, Gia Lâm, Hà Nội',
+      role: 'manager'
+    });
+  }
+
+  // Ensure standard customer exists
+  const hasCustomer = registered.some(u => (u.username === 'namnguyen' || u.email === 'nam.nguyen@woodluxe.vn'));
+  if (!hasCustomer) {
+    registered.push({
+      name: 'Nguyễn Văn Nam',
+      username: 'namnguyen',
+      email: 'nam.nguyen@woodluxe.vn',
+      phone: '0908 123 456',
+      password: '123456',
+      address: 'Vinhomes Central Park, Quận Bình Thạnh, TP. Hồ Chí Minh',
+      role: 'customer'
+    });
+  }
+
+  localStorage.setItem('woodluxe_registered_users', JSON.stringify(registered));
   return registered;
-
 }
 
 function handleLoginSubmit(e) {
@@ -4566,15 +4882,14 @@ function handleLoginSubmit(e) {
   showToastNotification(`Xin chào ${APP_STATE.currentUser.name}! Đăng nhập thành công.`, 'fa-solid fa-circle-check');
 
   if (window.location.pathname.includes('auth.html') || window.location.pathname.includes('login.html')) {
-
     setTimeout(() => {
-
-      window.location.href = 'account.html';
-
-    }, 1000);
-
+      if (APP_STATE.currentUser && (APP_STATE.currentUser.role === 'admin' || APP_STATE.currentUser.role === 'manager')) {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'account.html';
+      }
+    }, 800);
     return;
-
   }
 
   if (typeof APP_STATE.pendingAction === 'function') {
@@ -4770,15 +5085,14 @@ function handleQuickSampleLogin() {
   showToastNotification('Đăng nhập thành công bằng tài khoản mẫu: Nguyễn Văn Nam', 'fa-solid fa-circle-check');
 
   if (window.location.pathname.includes('auth.html') || window.location.pathname.includes('login.html')) {
-
     setTimeout(() => {
-
-      window.location.href = 'account.html';
-
-    }, 1000);
-
+      if (APP_STATE.currentUser && (APP_STATE.currentUser.role === 'admin' || APP_STATE.currentUser.role === 'manager')) {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'account.html';
+      }
+    }, 800);
     return;
-
   }
 
   if (typeof APP_STATE.pendingAction === 'function') {
@@ -5258,29 +5572,24 @@ function toggleSelectAllCart(isSelected) {
 }
 
 function removeSelectedCartItems() {
-
   const selectedCount = APP_STATE.cart.filter(item => item.selected !== false).length;
 
   if (selectedCount === 0) {
-
-    alert('Chưa có sản phẩm nào được chọn để xóa.');
-
+    showCustomAlertPopup('Chưa có sản phẩm nào được chọn để xóa.', 'Giỏ Hàng', 'info');
     return;
-
   }
 
-  if (confirm(`Bạn có chắc muốn xóa ${selectedCount} sản phẩm đã chọn khỏi giỏ hàng?`)) {
-
-    APP_STATE.cart = APP_STATE.cart.filter(item => item.selected === false);
-
-    saveCart();
-
-    updateCartUI();
-
-    renderCartPageTable();
-
-  }
-
+  showCustomConfirmModal(
+    `Bạn có chắc muốn xóa ${selectedCount} sản phẩm đã chọn khỏi giỏ hàng?`,
+    'Xác Nhận Xóa Sản Phẩm',
+    () => {
+      APP_STATE.cart = APP_STATE.cart.filter(item => item.selected === false);
+      saveCart();
+      updateCartUI();
+      renderCartPageTable();
+      showToastNotification(`Đã xóa ${selectedCount} sản phẩm khỏi giỏ hàng!`, 'fa-solid fa-trash-can');
+    }
+  );
 }
 
 function proceedToCheckoutSelected() {
@@ -5288,11 +5597,8 @@ function proceedToCheckoutSelected() {
   const selectedItems = APP_STATE.cart.filter(item => item.selected !== false);
 
   if (selectedItems.length === 0) {
-
-    alert('Vui lòng tích chọn ít nhất 1 sản phẩm trong giỏ hàng để tiến hành thanh toán!');
-
+    showCustomAlertPopup('Vui lòng tích chọn ít nhất 1 sản phẩm trong giỏ hàng để tiến hành thanh toán!', 'Thanh Toán Giỏ Hàng', 'info');
     return;
-
   }
 
   if (!APP_STATE.currentUser) {
@@ -5320,51 +5626,35 @@ function applyCartPageCoupon() {
   const code = input.value.trim().toUpperCase();
 
   if (code === 'WOODLUXE10') {
-
     APP_STATE.coupon = { code: 'WOODLUXE10', type: 'percentage', value: 10 };
-
     localStorage.setItem('woodluxe_applied_coupon', JSON.stringify(APP_STATE.coupon));
-
-    alert('Áp dụng mã WOODLUXE10 thành công (-10% tổng đơn hàng)!');
-
+    showCustomAlertPopup('Áp dụng mã WOODLUXE10 thành công (-10% tổng đơn hàng)!', 'Khuyến Mãi Đã Kích Hoạt', 'success');
     updateCartUI();
-
     renderCartPageTable();
-
   } else if (code === 'FREESHIP') {
-
     APP_STATE.coupon = { code: 'FREESHIP', type: 'shipping', value: 0 };
-
     localStorage.setItem('woodluxe_applied_coupon', JSON.stringify(APP_STATE.coupon));
-
-    alert('Áp dụng mã FREESHIP thành công!');
-
+    showCustomAlertPopup('Áp dụng mã FREESHIP thành công!', 'Miễn Phí Vận Chuyển', 'success');
     updateCartUI();
-
     renderCartPageTable();
-
   } else {
-
-    alert('Mã giảm giá không hợp lệ. Vui lòng thử: WOODLUXE10 hoặc FREESHIP');
-
+    showCustomAlertPopup('Mã giảm giá không hợp lệ. Vui lòng thử: WOODLUXE10 hoặc FREESHIP', 'Mã Không Hợp Lệ', 'warning');
   }
 
 }
 
 function clearAllCart() {
-
-  if (confirm('Bạn có chắc muốn xóa toàn bộ sản phẩm khỏi giỏ hàng?')) {
-
-    APP_STATE.cart = [];
-
-    saveCart();
-
-    updateCartUI();
-
-    renderCartPageTable();
-
-  }
-
+  showCustomConfirmModal(
+    'Bạn có chắc muốn xóa toàn bộ sản phẩm khỏi giỏ hàng?',
+    'Xóa Toàn Bộ Giỏ Hàng',
+    () => {
+      APP_STATE.cart = [];
+      saveCart();
+      updateCartUI();
+      renderCartPageTable();
+      showToastNotification('Đã làm trống giỏ hàng!', 'fa-solid fa-trash-can');
+    }
+  );
 }
 
 /* ==========================================================================
@@ -5412,8 +5702,25 @@ function renderAccountPage() {
   if (sidebarSub) {
     const userPoints = getUserPoints();
     const tier = getVipTier(userPoints);
-    const roleText = user.role === 'admin' ? 'Quản trị viên hệ thống' : tier.name;
+    const roleText = user.role === 'admin' ? 'Quản trị viên (Admin)' : (user.role === 'manager' ? 'Quản lý vận hành (Manager)' : tier.name);
     sidebarSub.textContent = `${roleText} • ${user.email || 'customer@woodluxe.vn'}`;
+  }
+
+  // Admin/Manager shortcut in account menu
+  const menu = document.querySelector('.account-sidebar-menu');
+  const existingAdminItem = document.getElementById('account-admin-menu-item');
+  if (user && (user.role === 'admin' || user.role === 'manager')) {
+    if (menu && !existingAdminItem) {
+      const li = document.createElement('li');
+      li.id = 'account-admin-menu-item';
+      li.className = 'account-menu-item';
+      li.style.cssText = 'background: #fef3c7; color: #b45309; font-weight: 700; border: 1px dashed #f59e0b; margin-bottom: 8px; cursor: pointer;';
+      li.innerHTML = `<i class="fa-solid fa-shield-halved" style="color: #d97706;"></i> <span>${user.role === 'admin' ? 'Trang Quản Trị (Admin)' : 'Trang Quản Lý (Manager)'}</span>`;
+      li.onclick = () => window.location.href = 'admin.html';
+      menu.insertBefore(li, menu.firstChild);
+    }
+  } else {
+    if (existingAdminItem) existingAdminItem.remove();
   }
 
   // 2. Dashboard Tab Welcome Greeting
@@ -5432,7 +5739,7 @@ function renderAccountPage() {
 
   const addrPhone = document.getElementById('account-addr-phone');
 
-  const defaultAddress = user.address && user.address.trim() ? user.address.trim() : 'Số 88 Đường Đồng Khởi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh';
+  const defaultAddress = user.address && user.address.trim() ? user.address.trim() : 'Số 68 Đường Cửu Việt, Trâu Quỳ, Gia Lâm, Hà Nội';
 
   if (addrName) addrName.textContent = user.name;
 
@@ -5604,7 +5911,12 @@ function updateAccountStats() {
 
   if (totalOrdersEl) totalOrdersEl.textContent = orders.length;
 
-  if (pendingOrdersEl) pendingOrdersEl.textContent = orders.filter(o => o.status === 'Đang xử lý' || o.status === 'Đang vận chuyển').length;
+  if (pendingOrdersEl) {
+    pendingOrdersEl.textContent = orders.filter(o => {
+      const s = String(o.status || '').toLowerCase();
+      return s === 'processing' || s === 'shipping' || s.includes('xử lý') || s.includes('vận chuyển') || s.includes('đang giao');
+    }).length;
+  }
 
   const currentPoints = getUserPoints();
 
@@ -5638,41 +5950,37 @@ function updateAccountStats() {
 
     } else {
 
-      const recent = orders.slice(0, 3);
+      const recent = orders.slice(0, 5);
 
-      recentOrdersEl.innerHTML = recent.map(o => `
+      recentOrdersEl.innerHTML = recent.map(o => {
+        const orderCode = o.orderId || o.id || 'WLX-ORDER';
+        const st = String(o.status || 'processing').toLowerCase();
+        let badgeHtml = '';
+        if (st === 'delivered' || st.includes('hoàn thành') || st.includes('đã giao')) {
+          badgeHtml = `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #dcfce7; color: #15803d; font-weight: 700; margin-top: 4px;"><i class="fa-solid fa-circle-check"></i> Đã giao thành công</span>`;
+        } else if (st === 'shipping' || st.includes('vận chuyển') || st.includes('đang giao')) {
+          badgeHtml = `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #e0f2fe; color: #0369a1; font-weight: 700; margin-top: 4px;"><i class="fa-solid fa-truck-fast"></i> Đang giao hàng</span>`;
+        } else if (st === 'cancelled' || st.includes('hủy')) {
+          badgeHtml = `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #fee2e2; color: #b91c1c; font-weight: 700; margin-top: 4px;"><i class="fa-solid fa-circle-xmark"></i> Đã hủy</span>`;
+        } else {
+          badgeHtml = `<span style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #fef3c7; color: #b45309; font-weight: 700; margin-top: 4px;"><i class="fa-solid fa-truck-ramp-box"></i> Đang xử lý</span>`;
+        }
 
+        return `
         <div style="background: #f8fafc; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-
           <div>
-
-            <strong style="color: var(--color-primary-navy);">${o.orderId}</strong> — <span style="color: var(--color-text-muted); font-size: 12px;">${o.date}</span>
-
-            <div style="font-size: 12px; color: var(--color-text-muted); margin-top: 3px;">${o.items.map(i => i.name).join(', ')}</div>
-
-            <span style="display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #e0f2fe; color: #0369a1; font-weight: 600; margin-top: 4px;">
-
-              <i class="fa-solid fa-truck-ramp-box"></i> ${o.status || 'Đang xử lý'}
-
-            </span>
-
+            <strong style="color: var(--color-primary-navy); font-size: 14px;">${orderCode}</strong> — <span style="color: var(--color-text-muted); font-size: 12px;">${o.date || ''}</span>
+            <div style="font-size: 12px; color: var(--color-text-muted); margin-top: 3px;">${(o.items || []).map(i => i.name).join(', ')}</div>
+            ${badgeHtml}
           </div>
-
           <div style="display: flex; align-items: center; gap: 14px;">
-
             <strong style="color: var(--color-accent-amber); font-size: 15px;">${formatVND(o.total)}</strong>
-
-            <button onclick="openOrderTrackingModal('${o.orderId}')" style="padding: 7px 14px; font-size: 12px; font-weight: 700; border: 1.5px solid var(--color-accent-amber); color: var(--color-accent-amber); background: #fff; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s;">
-
+            <button onclick="openOrderTrackingModal('${orderCode}')" style="padding: 7px 14px; font-size: 12px; font-weight: 700; border: 1.5px solid var(--color-accent-amber); color: var(--color-accent-amber); background: #fff; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s;">
               <i class="fa-solid fa-location-crosshairs"></i> Theo dõi
-
             </button>
-
           </div>
-
         </div>
-
-      `).join('');
+      `; }).join('');
 
     }
 
@@ -5791,420 +6099,307 @@ let selectedStandaloneColor = null;
 let selectedStandaloneSize = null;
 
 function renderStandalonePDP() {
-
   const container = document.getElementById('pdp-standalone-container');
-
   if (!container) return;
 
   const urlParams = new URLSearchParams(window.location.search);
-
   const productId = parseInt(urlParams.get('id') || '1');
-
   const product = PRODUCTS_DATA.find(p => p.id === productId) || PRODUCTS_DATA[0];
 
   currentStandaloneProduct = product;
-
   selectedStandaloneColor = product.colors ? product.colors[0] : null;
-
   selectedStandaloneSize = product.sizes ? product.sizes[0] : null;
 
   // Breadcrumbs
-
   const bCat = document.getElementById('pdp-page-breadcrumb-cat');
-
   const bTitle = document.getElementById('pdp-page-breadcrumb-title');
-
   if (bCat) bCat.textContent = CATEGORY_MAP_VI[product.category] || product.category;
-
   if (bTitle) bTitle.textContent = product.name;
 
-  const currentPrice = product.salePrice || product.regularPrice;
-
-  const hasSale = product.salePrice != null;
+  const initialVar = getProductVariation(product, selectedStandaloneColor, selectedStandaloneSize);
+  const currentPrice = initialVar ? (initialVar.salePrice || initialVar.regularPrice) : (product.salePrice || product.regularPrice);
+  const regularPrice = initialVar ? initialVar.regularPrice : product.regularPrice;
+  const hasSale = initialVar ? (initialVar.salePrice != null) : (product.salePrice != null);
+  const initialSku = initialVar ? initialVar.sku : product.sku;
+  const initialStock = initialVar ? initialVar.stockQuantity : product.stockQuantity;
 
   container.innerHTML = `
-
     <div class="pdp-layout" style="padding: 40px;">
-
       <div class="pdp-gallery-col">
-
         <img id="standalone-main-img" class="pdp-gallery-img" src="${product.image}" alt="${product.name}" style="height: 480px;" />
-
       </div>
-
       <div class="pdp-details-col">
-
         <div class="pdp-meta-row">
-
           <span>DANH MỤC: <strong style="color: var(--color-primary-navy);">${CATEGORY_MAP_VI[product.category] || product.category}</strong></span>
-
           <span>•</span>
-
           <span>THƯƠNG HIỆU: <strong style="color: var(--color-primary-navy);">${product.brand}</strong></span>
-
           <span>•</span>
-
-          <span>SKU: <strong id="standalone-sku-display">${product.sku}</strong></span>
-
+          <span>SKU: <strong id="standalone-sku-display">${initialSku}</strong></span>
+          <span>•</span>
+          <span>KHO: <strong id="standalone-stock-display" style="color: var(--color-success-green)"><i class="fa-solid fa-check"></i> Còn ${initialStock} sản phẩm</strong></span>
         </div>
-
         <h1 class="pdp-title" style="font-size: 28px;">${product.name}</h1>
-
         <div style="margin-bottom: 14px;">
-
           ${renderProductRatingHTML(product, true)}
-
         </div>
-
-        <div class="pdp-price-wrap" style="margin-bottom: 16px;">
-
+        <div class="pdp-price-wrap" id="standalone-price-wrap">
           <span class="pdp-price-current" id="standalone-price-display" style="font-size: 28px;">${formatVND(currentPrice)}</span>
-
-          ${hasSale ? `<span class="price-regular-strike" style="font-size: 18px;">${formatVND(product.regularPrice)}</span>` : ''}
-
-          ${hasSale ? `<span class="badge badge-sale" style="margin-left: 8px;">TIẾT KIỆM ${formatVND(product.regularPrice - product.salePrice)}</span>` : ''}
-
+          ${hasSale ? `<span class="price-regular-strike" id="standalone-strike-display" style="font-size: 18px;">${formatVND(regularPrice)}</span>` : ''}
         </div>
-
-        <p class="pdp-short-desc" style="font-size: 14px; line-height: 1.6; margin-bottom: 20px;">${product.shortDesc}</p>
+        <p class="pdp-short-desc">${product.shortDesc}</p>
 
         <!-- Variable Colors -->
-
         ${product.colors && product.colors.length > 0 ? `
-
           <div class="pdp-attribute-section">
-
-            <span class="attribute-label">MÀU SẮC BIẾN THỂ: <strong id="standalone-color-label" style="color: var(--color-primary-navy);">${selectedStandaloneColor}</strong></span>
-
+            <span class="attribute-label">MÀU SẮC: <strong id="standalone-color-label">${selectedStandaloneColor}</strong></span>
             <div class="pdp-color-picker">
-
-              ${product.colors.map(c => `
-
-                <button class="pdp-variation-btn ${c === selectedStandaloneColor ? 'active' : ''}" onclick="selectStandaloneColor('${c}')">${c}</button>
-
+              ${product.colors.map((c, i) => `
+                <button type="button" class="pdp-variation-btn ${i === 0 ? 'active' : ''}" onclick="selectStandaloneColor('${c}')">
+                  ${c}
+                </button>
               `).join('')}
-
             </div>
-
           </div>
-
         ` : ''}
 
         <!-- Variable Sizes -->
-
         ${product.sizes && product.sizes.length > 0 ? `
-
           <div class="pdp-attribute-section">
-
-            <span class="attribute-label">KÍCH THƯỚC: <strong id="standalone-size-label" style="color: var(--color-primary-navy);">${selectedStandaloneSize}</strong></span>
-
+            <span class="attribute-label">KÍCH THƯỚC: <strong id="standalone-size-label">${selectedStandaloneSize}</strong></span>
             <div class="pdp-size-picker">
-
-              ${product.sizes.map(s => `
-
-                <button class="pdp-variation-btn ${s === selectedStandaloneSize ? 'active' : ''}" onclick="selectStandaloneSize('${s}')">${s}</button>
-
+              ${product.sizes.map((s, i) => `
+                <button type="button" class="pdp-variation-btn ${i === 0 ? 'active' : ''}" onclick="selectStandaloneSize('${s}')">
+                  ${s}
+                </button>
               `).join('')}
-
             </div>
-
           </div>
-
         ` : ''}
 
-        <!-- Stock Status -->
-
-        <div style="font-size: 13px; color: var(--color-success-green); margin-bottom: 20px; display: flex; align-items: center; gap: 6px;">
-
-          <i class="fa-solid fa-circle-check"></i>
-
-          <span>Tình trạng: Còn hàng (${product.stockQuantity} sản phẩm sẵn sàng giao ngay)</span>
-
-        </div>
-
-        <!-- Quantity & Action Buttons -->
-
-        <div class="pdp-actions-row">
-
-          <div class="qty-stepper">
-
-            <button class="qty-btn" onclick="stepStandaloneQty(-1)"><i class="fa-solid fa-minus"></i></button>
-
-            <input type="text" id="standalone-qty-input" class="qty-input" value="1" readonly />
-
-            <button class="qty-btn" onclick="stepStandaloneQty(1)"><i class="fa-solid fa-plus"></i></button>
-
+        <!-- Quantity & Add to Cart -->
+        <div class="pdp-actions-row" style="margin-top: 24px;">
+          <div class="pdp-qty-stepper">
+            <button type="button" class="btn-qty-step" onclick="stepStandaloneQty(-1)">−</button>
+            <input type="number" id="standalone-qty-input" class="qty-field" value="1" min="1" max="20" />
+            <button type="button" class="btn-qty-step" onclick="stepStandaloneQty(1)">+</button>
           </div>
-
-          <button class="btn-primary" style="flex: 1;" onclick="addStandaloneProductToCart()">
-
+          <button type="button" class="btn-primary btn-pdp-add-cart" id="standalone-add-cart-btn" onclick="addStandaloneProductToCart()">
             <i class="hgi-stroke hgi-shopping-bag-02"></i>
-
             <span>THÊM VÀO GIỎ HÀNG</span>
-
           </button>
-
-          <button class="btn-outline-white" style="background: var(--color-primary-navy); color: #fff; padding: 12px 20px;" onclick="buyNowStandaloneProduct()">
-
+          <button type="button" class="btn-outline-white" style="background: var(--color-primary-navy); color: #fff; padding: 12px 20px;" onclick="buyNowStandaloneProduct()">
             <i class="fa-solid fa-bolt"></i>
-
             <span>MUA NGAY</span>
-
           </button>
-
         </div>
 
         <!-- Trust Badges -->
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--color-border); font-size: 12px; color: var(--color-text-muted);">
-
-          <div><i class="fa-solid fa-truck-fast" style="color: var(--color-accent-amber); margin-right: 6px;"></i> Miễn phí lắp đặt toàn quốc</div>
-
-          <div><i class="fa-solid fa-shield-halved" style="color: var(--color-accent-amber); margin-right: 6px;"></i> Bảo hành chính hãng 5 năm</div>
-
-          <div><i class="fa-solid fa-rotate-left" style="color: var(--color-accent-amber); margin-right: 6px;"></i> Đổi trả 30 ngày linh hoạt</div>
-
-          <div><i class="fa-solid fa-certificate" style="color: var(--color-accent-amber); margin-right: 6px;"></i> Chứng nhận chất lượng ISO</div>
-
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 30px; padding: 16px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px solid var(--color-border); font-size: 12px;">
+          <div><i class="fa-solid fa-truck-fast" style="color: var(--color-accent-amber); margin-right: 6px;"></i> Giao toàn quốc</div>
+          <div><i class="fa-solid fa-shield-halved" style="color: var(--color-accent-amber); margin-right: 6px;"></i> Bảo hành 36T</div>
+          <div><i class="fa-solid fa-arrow-rotate-left" style="color: var(--color-accent-amber); margin-right: 6px;"></i> Đổi trả 7 ngày</div>
         </div>
-
       </div>
-
     </div>
 
     <!-- Product Tabs -->
-
-    <div style="border-top: 1px solid var(--color-border); padding: 36px 40px;">
-
+    <div class="pdp-tabs-container" style="padding: 0 40px 40px;">
       <div class="pdp-tabs-nav">
-
-        <span class="pdp-tab-item active" onclick="switchStandaloneTab('desc', this)"><i class="fa-solid fa-file-lines"></i> Mô tả chi tiết</span>
-
-        <span class="pdp-tab-item" onclick="switchStandaloneTab('specs', this)"><i class="fa-solid fa-list-check"></i> Thông số kỹ thuật</span>
-
-        <span class="pdp-tab-item" onclick="switchStandaloneTab('policy', this)"><i class="fa-solid fa-truck"></i> Vận chuyển & Bảo hành</span>
-
-        <span class="pdp-tab-item" onclick="switchStandaloneTab('reviews', this)"><i class="fa-solid fa-star"></i> Đánh giá khách hàng (<span id="standalone-tab-reviews-count-${product.id}">${product.reviewsCount + (APP_STATE.userRatings[product.id]?.countAdded ? 1 : 0)}</span>)</span>
-
+        <button type="button" class="pdp-tab-item active" onclick="switchStandaloneTab('desc', this)">
+          <i class="fa-solid fa-circle-info"></i> Mô tả chi tiết
+        </button>
+        <button type="button" class="pdp-tab-item" onclick="switchStandaloneTab('specs', this)">
+          <i class="fa-solid fa-sliders"></i> Thông số kỹ thuật
+        </button>
+        <button type="button" class="pdp-tab-item" onclick="switchStandaloneTab('reviews', this)">
+          <i class="fa-solid fa-comments"></i> Đánh giá từ khách hàng (${product.reviewsCount})
+        </button>
       </div>
 
-      <div id="standalone-tab-desc" class="pdp-tab-pane active">
-
-        <p style="font-size: 15px; line-height: 1.8; color: var(--color-text-main);">${product.desc}</p>
-
-      </div>
-
-      <div id="standalone-tab-specs" class="pdp-tab-pane">
-
-        <table class="pdp-specs-table">
-
-          ${Object.entries(product.specs || {}).map(([key, val]) => `
-
-            <tr>
-
-              <td>${key}</td>
-
-              <td>${val}</td>
-
-            </tr>
-
-          `).join('')}
-
-        </table>
-
-      </div>
-
-      <div id="standalone-tab-policy" class="pdp-tab-pane">
-
-        <div style="line-height: 1.8; color: var(--color-text-main);">
-
-          <p><strong>Chính sách giao hàng:</strong> Giao hàng và lắp đặt miễn phí trong vòng 24–48h tại nội thành Hà Nội & TP. Hồ Chí Minh với đơn từ 10.000.000₫.</p>
-
-          <p><strong>Chính sách bảo hành:</strong> Bảo hành 5 năm kết cấu khung sườn, 2 năm đối với đệm bọc và phụ kiện cơ khí.</p>
-
-          <p><strong>Chính sách đổi trả:</strong> Hỗ trợ 1 đổi 1 trong 30 ngày nếu phát hiện bất kỳ lỗi chế tác nào từ nhà sản xuất.</p>
-
+      <div class="pdp-tabs-content">
+        <div class="pdp-tab-pane active" id="standalone-pane-desc">
+          <div class="pdp-desc-text">
+            <p>${product.desc}</p>
+            ${product.designerStory ? `
+              <div style="margin-top: 20px; padding: 16px; background: #fdfbf7; border-left: 3px solid var(--color-accent-amber); border-radius: var(--radius-sm);">
+                <strong style="color: var(--color-primary-navy); display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-compass-drafting" style="color: var(--color-accent-amber);"></i> Triết lý thiết kế Bắc Âu
+                </strong>
+                <p style="margin-top: 6px; font-size: 13px; color: var(--color-text-muted);">${product.designerStory}</p>
+              </div>
+            ` : ''}
+          </div>
         </div>
 
-      </div>
-
-      <div id="standalone-tab-reviews" class="pdp-tab-pane">
-
-        <!-- Interactive Review Form -->
-
-        <div style="background: #ffffff; border: 1px solid var(--color-border); border-radius: 8px; padding: 20px; margin-bottom: 24px;">
-
-          <h4 style="font-size: 15px; font-weight: 700; color: var(--color-primary-navy); margin-bottom: 6px;">Đánh giá của bạn về sản phẩm này</h4>
-
-          <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 12px;">Nhấp vào số sao và nhập cảm nhận trải nghiệm của bạn:</p>
-
-          <div style="margin-bottom: 14px;">
-
-            ${renderProductRatingHTML(product, false)}
-
-          </div>
-
-          <div style="display: flex; gap: 10px;">
-
-            <input type="text" id="review-comment-input-${product.id}" class="form-control" placeholder="Chia sẻ cảm nhận về chất lượng, hoàn thiện, đóng gói..." style="font-size: 13px;" />
-
-            <button class="btn-primary" style="padding: 10px 20px; font-size: 13px; white-space: nowrap;" onclick="submitPdpReviewText(${product.id})">
-
-              <i class="fa-solid fa-paper-plane"></i> Gửi đánh giá
-
-            </button>
-
-          </div>
-
+        <div class="pdp-tab-pane" id="standalone-pane-specs">
+          <table class="pdp-specs-table">
+            <tbody>
+              ${Object.entries(product.specs || {}).map(([k, v]) => `
+                <tr>
+                  <th>${k}</th>
+                  <td>${v}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
         </div>
 
-        <p style="color: #6b7280; margin-bottom: 14px; font-size: 13px; font-weight: 600;">Đánh giá thực tế từ khách hàng đã mua sản phẩm:</p>
-
-        <div id="pdp-reviews-list-${product.id}" style="display: flex; flex-direction: column; gap: 14px;">
-
-          <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
-
-            <div style="color: var(--color-star-yellow); margin-bottom: 6px;">
-
-              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-
+        <div class="pdp-tab-pane" id="standalone-pane-reviews">
+          <div style="padding: 24px; background: #ffffff; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid var(--color-border); flex-wrap: wrap;">
+              <div style="text-align: center; min-width: 120px;">
+                <div style="font-size: 48px; font-weight: 800; color: var(--color-primary-navy); line-height: 1;">${product.rating || 5.0}</div>
+                <div style="color: var(--color-accent-amber); font-size: 16px; margin: 4px 0;">
+                  ${'<i class="fa-solid fa-star"></i>'.repeat(Math.round(product.rating || 5))}
+                </div>
+                <div style="font-size: 13px; color: var(--color-text-muted);">${product.reviewsCount} khách hàng đã đánh giá</div>
+              </div>
+              <div style="flex: 1;">
+                <h4 style="margin: 0 0 6px; font-size: 15px; color: var(--color-primary-navy);">Đánh giá sản phẩm này</h4>
+                <p style="margin: 0; font-size: 13px; color: var(--color-text-muted);">
+                  Chỉ những khách hàng đã đặt mua thành công mới có thể gửi đánh giá xác thực.
+                </p>
+                <div style="margin-top: 10px;">
+                  ${renderProductRatingHTML(product, true)}
+                </div>
+              </div>
             </div>
-
-            <strong>Trần Hoàng Nam (Kiến trúc sư)</strong> — <em>Chất liệu vải bouclé rất đầm tay, khung cực kỳ chắc chắn, giao hàng đúng hẹn.</em>
-
           </div>
-
-          <div style="background: #f8fafc; padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
-
-            <div style="color: var(--color-star-yellow); margin-bottom: 6px;">
-
-              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-
-            </div>
-
-            <strong>Lê Minh Anh</strong> — <em>Tone màu Bắc Âu rất ăn nhập với căn hộ của mình, độ hoàn thiện tinh xảo không tì vết.</em>
-
-          </div>
-
         </div>
-
       </div>
-
     </div>
-
   `;
 
   renderPdpRelatedProducts(product.category, product.id);
-
+  updateStandaloneVariationUI();
 }
 
 function selectStandaloneColor(color) {
-
   selectedStandaloneColor = color;
-
   const label = document.getElementById('standalone-color-label');
-
   if (label) label.textContent = color;
-
   document.querySelectorAll('#pdp-standalone-container .pdp-color-picker .pdp-variation-btn').forEach(btn => {
-
-    btn.classList.toggle('active', btn.textContent === color);
-
+    btn.classList.toggle('active', btn.textContent.trim() === color);
   });
-
-  updateStandaloneSKU();
-
+  updateStandaloneVariationUI();
 }
 
 function selectStandaloneSize(size) {
-
   selectedStandaloneSize = size;
-
   const label = document.getElementById('standalone-size-label');
-
   if (label) label.textContent = size;
-
   document.querySelectorAll('#pdp-standalone-container .pdp-size-picker .pdp-variation-btn').forEach(btn => {
-
-    btn.classList.toggle('active', btn.textContent === size);
-
+    btn.classList.toggle('active', btn.textContent.trim() === size);
   });
+  updateStandaloneVariationUI();
+}
 
-  updateStandaloneSKU();
+function updateStandaloneVariationUI() {
+  if (!currentStandaloneProduct) return;
+  const variation = getProductVariation(currentStandaloneProduct, selectedStandaloneColor, selectedStandaloneSize);
+  if (!variation) return;
 
+  // 1. Update SKU
+  const skuEl = document.getElementById('standalone-sku-display');
+  if (skuEl) skuEl.textContent = variation.sku;
+
+  // 2. Update Price
+  const priceDisplay = document.getElementById('standalone-price-display');
+  const priceWrap = document.getElementById('standalone-price-wrap');
+  const currentPrice = variation.salePrice || variation.regularPrice;
+  const hasSale = variation.salePrice != null;
+
+  if (priceDisplay) {
+    priceDisplay.textContent = formatVND(currentPrice);
+  }
+  if (priceWrap) {
+    let strikeEl = document.getElementById('standalone-strike-display');
+    if (hasSale) {
+      if (strikeEl) {
+        strikeEl.textContent = formatVND(variation.regularPrice);
+      } else {
+        strikeEl = document.createElement('span');
+        strikeEl.className = 'price-regular-strike';
+        strikeEl.id = 'standalone-strike-display';
+        strikeEl.style.fontSize = '18px';
+        strikeEl.textContent = formatVND(variation.regularPrice);
+        priceWrap.appendChild(strikeEl);
+      }
+    } else if (strikeEl) {
+      strikeEl.remove();
+    }
+  }
+
+  // 3. Update Stock
+  const stockEl = document.getElementById('standalone-stock-display');
+  const addBtn = document.getElementById('standalone-add-cart-btn');
+  if (stockEl) {
+    if (variation.stockQuantity > 0) {
+      stockEl.innerHTML = `<i class="fa-solid fa-check"></i> Còn ${variation.stockQuantity} sản phẩm`;
+      stockEl.style.color = 'var(--color-success-green)';
+      if (addBtn) {
+        addBtn.disabled = false;
+        addBtn.innerHTML = '<i class="hgi-stroke hgi-shopping-bag-02"></i><span>THÊM VÀO GIỎ HÀNG</span>';
+        addBtn.style.opacity = '1';
+        addBtn.style.cursor = 'pointer';
+      }
+    } else {
+      stockEl.innerHTML = `<i class="fa-solid fa-xmark"></i> Hết hàng tạm thời`;
+      stockEl.style.color = 'var(--color-sale-red)';
+      if (addBtn) {
+        addBtn.disabled = true;
+        addBtn.innerHTML = '<i class="fa-solid fa-ban"></i><span>HẾT HÀNG</span>';
+        addBtn.style.opacity = '0.6';
+        addBtn.style.cursor = 'not-allowed';
+      }
+    }
+  }
 }
 
 function updateStandaloneSKU() {
-
-  if (!currentStandaloneProduct) return;
-
-  const skuEl = document.getElementById('standalone-sku-display');
-
-  if (!skuEl) return;
-
-  const colorCode = selectedStandaloneColor ? selectedStandaloneColor.substring(0, 3).toUpperCase() : 'DEF';
-
-  const sizeCode = selectedStandaloneSize ? selectedStandaloneSize.substring(0, 3).toUpperCase() : 'STD';
-
-  skuEl.textContent = `${currentStandaloneProduct.sku}-${colorCode}-${sizeCode}`;
-
+  updateStandaloneVariationUI();
 }
 
 function stepStandaloneQty(delta) {
-
   const input = document.getElementById('standalone-qty-input');
-
   if (!input) return;
-
   let val = parseInt(input.value) + delta;
-
   if (val < 1) val = 1;
-
   if (val > 20) val = 20;
-
   input.value = val;
-
 }
 
 function addStandaloneProductToCart() {
-
   if (!currentStandaloneProduct) return;
-
   const qtyInput = document.getElementById('standalone-qty-input');
-
   const qty = qtyInput ? parseInt(qtyInput.value) : 1;
-
-  addToCart(currentStandaloneProduct, qty, selectedStandaloneColor, selectedStandaloneSize);
-
+  const variation = getProductVariation(currentStandaloneProduct, selectedStandaloneColor, selectedStandaloneSize);
+  const activePrice = variation ? (variation.salePrice || variation.regularPrice) : (currentStandaloneProduct.salePrice || currentStandaloneProduct.regularPrice);
+  const activeSku = variation ? variation.sku : currentStandaloneProduct.sku;
+  addToCart(currentStandaloneProduct, qty, selectedStandaloneColor, selectedStandaloneSize, activePrice, activeSku);
 }
 
 function buyNowStandaloneProduct() {
-
   if (!currentStandaloneProduct) return;
-
   const qtyInput = document.getElementById('standalone-qty-input');
-
   const qty = qtyInput ? parseInt(qtyInput.value) : 1;
-
-  addToCart(currentStandaloneProduct, qty, selectedStandaloneColor, selectedStandaloneSize);
-
+  const variation = getProductVariation(currentStandaloneProduct, selectedStandaloneColor, selectedStandaloneSize);
+  const activePrice = variation ? (variation.salePrice || variation.regularPrice) : (currentStandaloneProduct.salePrice || currentStandaloneProduct.regularPrice);
+  const activeSku = variation ? variation.sku : currentStandaloneProduct.sku;
+  addToCart(currentStandaloneProduct, qty, selectedStandaloneColor, selectedStandaloneSize, activePrice, activeSku);
   window.location.href = 'checkout.html';
-
 }
 
 function switchStandaloneTab(tabKey, tabElem) {
-
   document.querySelectorAll('#pdp-standalone-container .pdp-tab-item').forEach(el => el.classList.remove('active'));
-
   document.querySelectorAll('#pdp-standalone-container .pdp-tab-pane').forEach(el => el.classList.remove('active'));
-
   if (tabElem) tabElem.classList.add('active');
-
-  const pane = document.getElementById(`standalone-tab-${tabKey}`);
-
-  if (pane) pane.classList.add('active');
-
+  const targetPane = document.getElementById(`standalone-pane-${tabKey}`);
+  if (targetPane) targetPane.classList.add('active');
 }
+
+
+
 
 function renderPdpRelatedProducts(category, excludeId) {
 
@@ -6294,7 +6489,7 @@ function submitPdpReviewText(productId) {
 
   if (!input || !input.value.trim()) {
 
-    alert('Vui lòng nhập cảm nhận trước khi gửi đánh giá.');
+    showCustomAlertPopup('Vui lòng nhập cảm nhận trước khi gửi đánh giá.', 'Đánh Giá Sản Phẩm', 'warning');
 
     return;
 
@@ -6347,14 +6542,11 @@ function submitPdpReviewText(productId) {
    ========================================================================== */
 
 function ensureOrderTrackingModalExists() {
-
   if (document.getElementById('order-tracking-modal')) return;
 
   const modalHtml = `
-
-    <div id="order-tracking-modal" class="modal-overlay">
-
-      <div class="modal-card" style="max-width: 680px; width: 94%; padding: 0; overflow: hidden; border-radius: var(--radius-md); box-shadow: 0 20px 40px rgba(0,0,0,0.25);">
+    <div id="order-tracking-modal" class="modal-overlay custom-alert-overlay" onclick="if(event.target===this)closeOrderTrackingModal()">
+      <div class="modal-card" onclick="event.stopPropagation()" style="max-width: 680px; width: 94%; padding: 0; overflow: hidden; border-radius: var(--radius-md); box-shadow: 0 25px 60px rgba(0,0,0,0.35);">
 
         <!-- Modal Header -->
 
@@ -7075,82 +7267,76 @@ function exchangePointsForVoucher(voucherType) {
   const stockMap = getVoucherStock();
   const remainingStock = stockMap[item.id] !== undefined ? stockMap[item.id] : item.totalStock;
   if (remainingStock <= 0) {
-    alert('Rất tiếc, voucher này đã hết số lượng phát hành đợt này! Vui lòng chọn voucher khác.');
+    showCustomAlertPopup('Rất tiếc, voucher này đã hết số lượng phát hành đợt này! Vui lòng chọn voucher khác.', 'Hết Lượt Đổi', 'warning');
     return;
   }
 
   const userCounts = getUserRedeemedCounts();
   const userRedeemed = userCounts[item.id] || 0;
   if (userRedeemed >= item.userLimit) {
-    alert(`Bạn đã đạt giới hạn tối đa (${item.userLimit} lần) cho mã voucher này!`);
+    showCustomAlertPopup(`Bạn đã đạt giới hạn tối đa (${item.userLimit} lần) cho mã voucher này!`, 'Đạt Giới Hạn', 'warning');
     return;
   }
 
   const currentPoints = getUserPoints();
   if (currentPoints < item.cost) {
-    alert(`Bạn cần thêm ${(item.cost - currentPoints).toLocaleString('vi-VN')} điểm để đổi voucher này! Hãy tiếp tục mua sắm để nhận thêm điểm thưởng.`);
+    showCustomAlertPopup(`Bạn cần thêm ${(item.cost - currentPoints).toLocaleString('vi-VN')} điểm để đổi voucher này! Hãy tiếp tục mua sắm để nhận thêm điểm thưởng.`, 'Chưa Đủ Điểm', 'info');
     return;
   }
 
-  if (confirm(`Bạn có chắc chắn muốn dùng ${item.cost.toLocaleString('vi-VN')} điểm để đổi "${item.title}"? (Còn lại ${remainingStock} suất)`)) {
-    const code = `WLX-P${voucherType}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const newVoucher = {
-      code: code,
-      title: item.title,
-      desc: item.desc,
-      type: item.type,
-      value: item.discount,
-      minSpend: item.minSpend,
-      expiry: '31/12/2026',
-      badge: 'Đổi từ điểm'
-    };
+  showCustomConfirmModal(
+    `Bạn có chắc chắn muốn dùng ${item.cost.toLocaleString('vi-VN')} điểm để đổi "${item.title}"? (Còn lại ${remainingStock} suất)`,
+    'Xác Nhận Đổi Voucher',
+    () => {
+      const code = `WLX-P${voucherType}-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newVoucher = {
+        code: code,
+        title: item.title,
+        desc: item.desc,
+        type: item.type,
+        value: item.discount,
+        minSpend: item.minSpend,
+        expiry: '31/12/2026',
+        badge: 'Đổi từ điểm'
+      };
 
-    // 1. Deduct stock in catalog
-    stockMap[item.id] = Math.max(0, remainingStock - 1);
-    localStorage.setItem('woodluxe_voucher_stock', JSON.stringify(stockMap));
+      // 1. Deduct stock in catalog
+      stockMap[item.id] = Math.max(0, remainingStock - 1);
+      localStorage.setItem('woodluxe_voucher_stock', JSON.stringify(stockMap));
 
-    // 2. Increase user redeemed count
-    userCounts[item.id] = userRedeemed + 1;
-    const userCountKey = getUserStorageKey('woodluxe_user_redeemed_counts');
-    localStorage.setItem(userCountKey, JSON.stringify(userCounts));
+      // 2. Increase user redeemed count
+      userCounts[item.id] = userRedeemed + 1;
+      const userCountKey = getUserStorageKey('woodluxe_user_redeemed_counts');
+      localStorage.setItem(userCountKey, JSON.stringify(userCounts));
 
-    // 3. Deduct points
-    setUserPoints(currentPoints - item.cost, {
-      type: 'redeem',
-      points: -item.cost,
-      desc: `Đổi voucher ${item.title} (${code})`
-    });
+      // 3. Deduct points
+      setUserPoints(currentPoints - item.cost, {
+        type: 'redeem',
+        points: -item.cost,
+        desc: `Đổi voucher ${item.title} (${code})`
+      });
 
-    // 4. Add to user vouchers
-    addUserVoucher(newVoucher);
+      // 4. Add to user vouchers
+      addUserVoucher(newVoucher);
 
-    showToastNotification(`Đổi voucher thành công! Mã: ${code} (Số lượng còn lại: ${stockMap[item.id]})`, 'fa-solid fa-gift');
-    renderLoyaltyTab();
-    updateAccountStats();
-  }
+      showToastNotification(`Đổi voucher thành công! Mã: ${code} (Số lượng còn lại: ${stockMap[item.id]})`, 'fa-solid fa-gift');
+      renderLoyaltyTab();
+      updateAccountStats();
+    }
+  );
 }
 
 
 function copyVoucherCode(code) {
-
   if (navigator.clipboard) {
-
     navigator.clipboard.writeText(code).then(() => {
-
       showToastNotification(`Đã sao chép mã voucher ${code}!`, 'fa-solid fa-copy');
-
     }).catch(() => {
-
-      prompt('Mã voucher của bạn:', code);
-
+      showCustomAlertPopup(`Mã voucher của bạn: ${code}`, 'Mã Voucher', 'info');
     });
-
   } else {
-
-    prompt('Mã voucher của bạn:', code);
-
+    showCustomAlertPopup(`Mã voucher của bạn: ${code}`, 'Mã Voucher', 'info');
   }
-
 }
 
 function useVoucherDirectly(code) {

@@ -14,6 +14,7 @@ INCLUDE_ROOT_FILES = [
     'account.html',
     'auth.html',
     'login.html',
+    'admin.html',
     'wishlist.html',
     'blog.html'
 ]

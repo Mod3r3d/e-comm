@@ -1,0 +1,96 @@
+# ==============================================================================
+# WOODLUXE E-COMMERCE - .gitignore
+# Cấu hình lọc các file không nên đưa lên Git Repository
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. CÁC GÓI NÉN & BẢN XUẤT BẢN BUILD / DEPLOY (Archive & Deployment Packages)
+# Tránh đẩy file nén nặng vào Git làm phình to lịch sử commit repository
+# ------------------------------------------------------------------------------
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+
+# Các file zip deploy cụ thể của dự án
+woodluxe-infinityfree-deploy.zip
+twentytwentyfive-child.zip
+
+# ------------------------------------------------------------------------------
+# 2. THƯ MỤC THỬ NGHIỆM TẠM THỜI (Scratch & Temp Testing)
+# Giữ lại cấu trúc thư mục scratch thông qua .gitkeep, bỏ qua file nháp
+# ------------------------------------------------------------------------------
+scratch/*
+!scratch/.gitkeep
+*.tmp
+*.temp
+*.bak
+*.swp
+*.old
+
+# ------------------------------------------------------------------------------
+# 3. FILE NHẠY CẢM & CẤU HÌNH MÔI TRƯỜNG CỤC BỘ (Secrets & Environment)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+*.local
+*.local.php
+config.php
+
+# ------------------------------------------------------------------------------
+# 4. HỆ ĐIỀU HÀNH & HỆ THỐNG FILE (OS Generated Files)
+# ------------------------------------------------------------------------------
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ------------------------------------------------------------------------------
+# 5. TRÌNH SOẠN THẢO & IDE (IDE & Editor Settings)
+# ------------------------------------------------------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# ------------------------------------------------------------------------------
+# 6. LOGS & FILE GHI NHẬT KÝ (Logs)
+# ------------------------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+error_log
+
+# ------------------------------------------------------------------------------
+# 7. PYTHON & RUNTIME CACHE (Dành cho các script phụ trợ)
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+#others
+DEPLOYMENT_GUIDE_INFINITYFREE.md
+AGENTS.md
+start_xampp.bat

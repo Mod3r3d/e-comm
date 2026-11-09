@@ -417,9 +417,10 @@ DELIMITER ;
 
 -- 1. Chèn người dùng
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `full_name`, `phone`, `address`, `role`) VALUES
-(1, 'admin', 'admin@woodluxe.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Quản Trị Viên WOODLUXE', '1900 6868', 'Quận 1, TP. Hồ Chí Minh', 'admin'),
-(2, 'nam.nguyen', 'nam.nguyen@woodluxe.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Trần Hoàng Nam', '0901 234 567', 'Penthouse B12, Thảo Điền, Quận 2, TP. Hồ Chí Minh', 'customer'),
-(3, 'linh.dan', 'linh.dan@woodluxe.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Đặng Quỳnh Nga', '0988 776 655', 'Biệt thự Ciputra, Tây Hồ, Hà Nội', 'customer');
+(1, 'admin', 'admin@woodluxe.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Quản Trị Viên WOODLUXE', '1900 6868', 'Tòa nhà WOODLUXE, 88 Đồng Khởi, Q.1, TP. HCM', 'admin'),
+(2, 'manager', 'manager@woodluxe.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Trần Quản Lý (Operations)', '0909 333 444', 'Showroom WOODLUXE, Trâu Quỳ, Gia Lâm, Hà Nội', 'manager'),
+(3, 'nam.nguyen', 'nam.nguyen@woodluxe.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Trần Hoàng Nam', '0901 234 567', 'Penthouse B12, Thảo Điền, Quận 2, TP. Hồ Chí Minh', 'customer'),
+(4, 'linh.dan', 'linh.dan@woodluxe.vn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Đặng Quỳnh Nga', '0988 776 655', 'Biệt thự Ciputra, Tây Hồ, Hà Nội', 'customer');
 
 -- 2. Chèn 6 danh mục
 INSERT INTO `categories` (`id`, `name`, `slug`, `icon_class`, `image_url`, `description`, `display_order`) VALUES
@@ -461,85 +462,177 @@ INSERT INTO `products` (`id`, `category_id`, `brand_id`, `name`, `slug`, `sku`, 
 (19, 5, 4, 'Bordeaux Brass Wall Sconce', 'bordeaux-brass-wall-sconce', 'LGT-BDX-19', 'simple', 2100000, NULL, 28, 'instock', 4.70, 19, 'Đèn tường đồng cổ điển chiếu sáng điểm nhấn cầu thang và phòng ngủ.', 'Ánh sáng hắt 2 đầu trên dưới dịu nhẹ tôn lên vẻ đẹp của bề mặt tường vân bê tông hoặc ốp gỗ.', '{"Chất liệu": "100% Đồng thau nguyên khối", "Kích thước": "Cao 32cm, rộng 10cm"}', 'assets/images/brass-lamp.jpg', NULL, 0, 0),
 (20, 6, 3, 'Kanso Abstract Arch Mirror', 'kanso-abstract-arch-mirror', 'DEC-KAN-20', 'simple', 4200000, NULL, 12, 'instock', 4.80, 29, 'Gương đứng vòm phong cách tối giản viền nhôm anode chống oxy hóa.', 'Phôi gương Bỉ AGC tráng bạc 8 lớp dày 5mm cho hình ảnh phản chiếu chân thực, mở rộng chiều sâu không gian.', '{"Kích thước": "60 x 160 cm", "Khung": "Hợp kim nhôm Anode vàng champagne"}', 'assets/images/ceramic-vase.jpg', 'Hot', 0, 0);
 
--- 5. Chèn biến thể cho các sản phẩm Variable (8 sản phẩm biến thể theo canonical dataset)
+-- Ma trận 168 biến thể đầy đủ (Màu sắc x Kích thước) của 20 sản phẩm WOODLUXE
 INSERT INTO `product_variations` (`product_id`, `sku`, `color`, `size`, `regular_price`, `sale_price`, `stock_quantity`, `image_url`) VALUES
--- SP 1: Reddington Modular Sofa (3 màu x 3 size = 9 biến thể mẫu)
 (1, 'SOFA-RED-CRM-3S', 'Cream', 'Standard (3-Seater)', 32000000, 28500000, 5, 'assets/images/hero-sofa.jpg'),
-(1, 'SOFA-RED-CRM-4S', 'Cream', 'Large (4-Seater)', 36000000, 32500000, 3, 'assets/images/hero-sofa.jpg'),
-(1, 'SOFA-RED-CRM-LSP', 'Cream', 'L-Shape Sectional', 42000000, 37500000, 2, 'assets/images/hero-sofa.jpg'),
+(1, 'SOFA-RED-CRM-4S', 'Cream', 'Large (4-Seater)', 36000000, 32500000, 4, 'assets/images/hero-sofa.jpg'),
+(1, 'SOFA-RED-CRM-LSP', 'Cream', 'L-Shape Sectional', 42000000, 37500000, 3, 'assets/images/hero-sofa.jpg'),
 (1, 'SOFA-RED-CHR-3S', 'Charcoal', 'Standard (3-Seater)', 32000000, 28500000, 4, 'assets/images/hero-sofa.jpg'),
-(1, 'SOFA-RED-COG-3S', 'Cognac', 'Standard (3-Seater)', 33000000, 29500000, 1, 'assets/images/hero-sofa.jpg'),
+(1, 'SOFA-RED-CHR-4S', 'Charcoal', 'Large (4-Seater)', 36000000, 32500000, 3, 'assets/images/hero-sofa.jpg'),
+(1, 'SOFA-RED-CHR-LSP', 'Charcoal', 'L-Shape Sectional', 42000000, 37500000, 2, 'assets/images/hero-sofa.jpg'),
+(1, 'SOFA-RED-COG-3S', 'Cognac', 'Standard (3-Seater)', 33000000, 29500000, 3, 'assets/images/hero-sofa.jpg'),
+(1, 'SOFA-RED-COG-4S', 'Cognac', 'Large (4-Seater)', 37000000, 33500000, 2, 'assets/images/hero-sofa.jpg'),
+(1, 'SOFA-RED-COG-LSP', 'Cognac', 'L-Shape Sectional', 43000000, 38500000, 1, 'assets/images/hero-sofa.jpg'),
+(2, 'TBL-AAR-02-NAT-160', 'Natural Oak', '160x90cm', 16500000, NULL, 8, 'assets/images/dining-table.jpg'),
+(2, 'TBL-AAR-02-NAT-180', 'Natural Oak', '180x90cm', 18500000, NULL, 12, 'assets/images/dining-table.jpg'),
+(2, 'TBL-AAR-02-NAT-210', 'Natural Oak', '210x100cm', 23000000, NULL, 5, 'assets/images/dining-table.jpg'),
+(2, 'TBL-AAR-02-SMO-160', 'Smoked Oak', '160x90cm', 17500000, NULL, 7, 'assets/images/dining-table.jpg'),
+(2, 'TBL-AAR-02-SMO-180', 'Smoked Oak', '180x90cm', 19500000, NULL, 10, 'assets/images/dining-table.jpg'),
+(2, 'TBL-AAR-02-SMO-210', 'Smoked Oak', '210x100cm', 24000000, NULL, 4, 'assets/images/dining-table.jpg'),
+(2, 'TBL-AAR-02-WAL-160', 'Walnut', '160x90cm', 18000000, NULL, 6, 'assets/images/dining-table.jpg'),
+(2, 'TBL-AAR-02-WAL-180', 'Walnut', '180x90cm', 20000000, NULL, 8, 'assets/images/dining-table.jpg'),
+(2, 'TBL-AAR-02-WAL-210', 'Walnut', '210x100cm', 25000000, NULL, 3, 'assets/images/dining-table.jpg'),
+(3, 'CHR-BER-03-CAR-STD', 'Caramel Tan', 'Standard', 12500000, 8900000, 5, 'assets/images/accent-chair.jpg'),
+(3, 'CHR-BER-03-CAR-OTM', 'Caramel Tan', 'With Ottoman', 16500000, 12900000, 3, 'assets/images/accent-chair.jpg'),
+(3, 'CHR-BER-03-ESP-STD', 'Espresso', 'Standard', 12500000, 8900000, 4, 'assets/images/accent-chair.jpg'),
+(3, 'CHR-BER-03-ESP-OTM', 'Espresso', 'With Ottoman', 16500000, 12900000, 2, 'assets/images/accent-chair.jpg'),
+(3, 'CHR-BER-03-GRN-STD', 'Forest Green', 'Standard', 12500000, 8900000, 3, 'assets/images/accent-chair.jpg'),
+(3, 'CHR-BER-03-GRN-OTM', 'Forest Green', 'With Ottoman', 16500000, 12900000, 2, 'assets/images/accent-chair.jpg'),
+(4, 'LGT-KOP-04-BRS-180', 'Brushed Brass', '180cm Height', 6800000, 5440000, 10, 'assets/images/brass-lamp.jpg'),
+(4, 'LGT-KOP-04-BRS-210', 'Brushed Brass', '210cm Height', 7800000, 6240000, 6, 'assets/images/brass-lamp.jpg'),
+(4, 'LGT-KOP-04-BLK-180', 'Matte Black', '180cm Height', 6500000, 5200000, 8, 'assets/images/brass-lamp.jpg'),
+(4, 'LGT-KOP-04-BLK-210', 'Matte Black', '210cm Height', 7500000, 6000000, 5, 'assets/images/brass-lamp.jpg'),
+(4, 'LGT-KOP-04-CHM-180', 'Chrome', '180cm Height', 6600000, 5280000, 6, 'assets/images/brass-lamp.jpg'),
+(4, 'LGT-KOP-04-CHM-210', 'Chrome', '210cm Height', 7600000, 6080000, 4, 'assets/images/brass-lamp.jpg'),
+(5, 'BED-OSL-05-BEI-QEN', 'Oatmeal Beige', 'Queen (160x200)', 24000000, NULL, 4, 'assets/images/platform-bed.jpg'),
+(5, 'BED-OSL-05-BEI-KNG', 'Oatmeal Beige', 'King (180x200)', 26000000, NULL, 6, 'assets/images/platform-bed.jpg'),
+(5, 'BED-OSL-05-BEI-SKN', 'Oatmeal Beige', 'Super King (200x220)', 29500000, NULL, 3, 'assets/images/platform-bed.jpg'),
+(5, 'BED-OSL-05-GRY-QEN', 'Slate Grey', 'Queen (160x200)', 24000000, NULL, 3, 'assets/images/platform-bed.jpg'),
+(5, 'BED-OSL-05-GRY-KNG', 'Slate Grey', 'King (180x200)', 26000000, NULL, 5, 'assets/images/platform-bed.jpg'),
+(5, 'BED-OSL-05-GRY-SKN', 'Slate Grey', 'Super King (200x220)', 29500000, NULL, 2, 'assets/images/platform-bed.jpg'),
+(5, 'BED-OSL-05-CRM-QEN', 'Warm Cream', 'Queen (160x200)', 24000000, NULL, 4, 'assets/images/platform-bed.jpg'),
+(5, 'BED-OSL-05-CRM-KNG', 'Warm Cream', 'King (180x200)', 26000000, NULL, 4, 'assets/images/platform-bed.jpg'),
+(5, 'BED-OSL-05-CRM-SKN', 'Warm Cream', 'Super King (200x220)', 29500000, NULL, 2, 'assets/images/platform-bed.jpg'),
+(6, 'DEC-KYO-06-TER-SML', 'Earthy Terracotta', 'Set 3 Bình Mini (15-20cm)', 1800000, NULL, 15, 'assets/images/ceramic-vase.jpg'),
+(6, 'DEC-KYO-06-TER-MED', 'Earthy Terracotta', 'Set 3 Bình Tiêu Chuẩn (25-35cm)', 2400000, NULL, 20, 'assets/images/ceramic-vase.jpg'),
+(6, 'DEC-KYO-06-TER-LRG', 'Earthy Terracotta', 'Set 3 Bình Đại Sảnh (40-50cm)', 3600000, NULL, 8, 'assets/images/ceramic-vase.jpg'),
+(6, 'DEC-KYO-06-GRY-SML', 'Basalt Grey', 'Set 3 Bình Mini (15-20cm)', 1800000, NULL, 12, 'assets/images/ceramic-vase.jpg'),
+(6, 'DEC-KYO-06-GRY-MED', 'Basalt Grey', 'Set 3 Bình Tiêu Chuẩn (25-35cm)', 2400000, NULL, 16, 'assets/images/ceramic-vase.jpg'),
+(6, 'DEC-KYO-06-GRY-LRG', 'Basalt Grey', 'Set 3 Bình Đại Sảnh (40-50cm)', 3600000, NULL, 6, 'assets/images/ceramic-vase.jpg'),
+(6, 'DEC-KYO-06-WHT-SML', 'Sand White', 'Set 3 Bình Mini (15-20cm)', 1800000, NULL, 10, 'assets/images/ceramic-vase.jpg'),
+(6, 'DEC-KYO-06-WHT-MED', 'Sand White', 'Set 3 Bình Tiêu Chuẩn (25-35cm)', 2400000, NULL, 14, 'assets/images/ceramic-vase.jpg'),
+(6, 'DEC-KYO-06-WHT-LRG', 'Sand White', 'Set 3 Bình Đại Sảnh (40-50cm)', 3600000, NULL, 5, 'assets/images/ceramic-vase.jpg'),
+(7, 'CHR-STK-07-EMR-STD', 'Emerald Green', 'Chân Cố Định (Standard)', 7200000, 6480000, 8, 'assets/images/accent-chair.jpg'),
+(7, 'CHR-STK-07-EMR-SWV', 'Emerald Green', 'Chân Xoay 360° (Swivel)', 8200000, 7380000, 6, 'assets/images/accent-chair.jpg'),
+(7, 'CHR-STK-07-EMR-DLX', 'Emerald Green', 'Kèm Gối Lông Vũ (Deluxe)', 8900000, 8000000, 4, 'assets/images/accent-chair.jpg'),
+(7, 'CHR-STK-07-BLU-STD', 'Midnight Blue', 'Chân Cố Định (Standard)', 7200000, 6480000, 7, 'assets/images/accent-chair.jpg'),
+(7, 'CHR-STK-07-BLU-SWV', 'Midnight Blue', 'Chân Xoay 360° (Swivel)', 8200000, 7380000, 5, 'assets/images/accent-chair.jpg'),
+(7, 'CHR-STK-07-BLU-DLX', 'Midnight Blue', 'Kèm Gối Lông Vũ (Deluxe)', 8900000, 8000000, 3, 'assets/images/accent-chair.jpg'),
+(7, 'CHR-STK-07-ROS-STD', 'Dusty Rose', 'Chân Cố Định (Standard)', 7200000, 6480000, 6, 'assets/images/accent-chair.jpg'),
+(7, 'CHR-STK-07-ROS-SWV', 'Dusty Rose', 'Chân Xoay 360° (Swivel)', 8200000, 7380000, 4, 'assets/images/accent-chair.jpg'),
+(7, 'CHR-STK-07-ROS-DLX', 'Dusty Rose', 'Kèm Gối Lông Vũ (Deluxe)', 8900000, 8000000, 3, 'assets/images/accent-chair.jpg'),
+(8, 'TBL-MLM-08-NOK-D60', 'Natural Oak', 'Đường kính 60cm', 6900000, NULL, 8, 'assets/images/dining-table.jpg'),
+(8, 'TBL-MLM-08-NOK-D80', 'Natural Oak', 'Đường kính 80cm', 8900000, NULL, 10, 'assets/images/dining-table.jpg'),
+(8, 'TBL-MLM-08-NOK-D100', 'Natural Oak', 'Đường kính 100cm', 11500000, NULL, 5, 'assets/images/dining-table.jpg'),
+(8, 'TBL-MLM-08-SOK-D60', 'Smoked Oak', 'Đường kính 60cm', 7200000, NULL, 6, 'assets/images/dining-table.jpg'),
+(8, 'TBL-MLM-08-SOK-D80', 'Smoked Oak', 'Đường kính 80cm', 9400000, NULL, 8, 'assets/images/dining-table.jpg'),
+(8, 'TBL-MLM-08-SOK-D100', 'Smoked Oak', 'Đường kính 100cm', 12000000, NULL, 4, 'assets/images/dining-table.jpg'),
+(8, 'TBL-MLM-08-WAL-D60', 'Walnut', 'Đường kính 60cm', 7500000, NULL, 5, 'assets/images/dining-table.jpg'),
+(8, 'TBL-MLM-08-WAL-D80', 'Walnut', 'Đường kính 80cm', 9900000, NULL, 7, 'assets/images/dining-table.jpg'),
+(8, 'TBL-MLM-08-WAL-D100', 'Walnut', 'Đường kính 100cm', 12800000, NULL, 3, 'assets/images/dining-table.jpg'),
+(9, 'SOFA-CPH-09-COG-180', 'Cognac Brown', 'Văng 2 Chỗ (180cm)', 32000000, NULL, 3, 'assets/images/hero-sofa.jpg'),
+(9, 'SOFA-CPH-09-COG-220', 'Cognac Brown', 'Văng 3 Chỗ (220cm)', 38000000, NULL, 5, 'assets/images/hero-sofa.jpg'),
+(9, 'SOFA-CPH-09-COG-260', 'Cognac Brown', 'Văng 4 Chỗ (260cm)', 45000000, NULL, 2, 'assets/images/hero-sofa.jpg'),
+(9, 'SOFA-CPH-09-BLK-180', 'Black Onyx', 'Văng 2 Chỗ (180cm)', 32000000, NULL, 2, 'assets/images/hero-sofa.jpg'),
+(9, 'SOFA-CPH-09-BLK-220', 'Black Onyx', 'Văng 3 Chỗ (220cm)', 38000000, NULL, 4, 'assets/images/hero-sofa.jpg'),
+(9, 'SOFA-CPH-09-BLK-260', 'Black Onyx', 'Văng 4 Chỗ (260cm)', 45000000, NULL, 1, 'assets/images/hero-sofa.jpg'),
+(9, 'SOFA-CPH-09-NAV-180', 'Classic Navy', 'Văng 2 Chỗ (180cm)', 32000000, NULL, 2, 'assets/images/hero-sofa.jpg'),
+(9, 'SOFA-CPH-09-NAV-220', 'Classic Navy', 'Văng 3 Chỗ (220cm)', 38000000, NULL, 3, 'assets/images/hero-sofa.jpg'),
+(9, 'SOFA-CPH-09-NAV-260', 'Classic Navy', 'Văng 4 Chỗ (260cm)', 45000000, NULL, 1, 'assets/images/hero-sofa.jpg'),
+(10, 'BED-HEL-10-LOK-QEN', 'Light Oak', 'Queen (160x200)', 20000000, NULL, 5, 'assets/images/platform-bed.jpg'),
+(10, 'BED-HEL-10-LOK-KNG', 'Light Oak', 'King (180x200)', 22000000, NULL, 7, 'assets/images/platform-bed.jpg'),
+(10, 'BED-HEL-10-LOK-SKN', 'Light Oak', 'Super King (200x220)', 25500000, NULL, 3, 'assets/images/platform-bed.jpg'),
+(10, 'BED-HEL-10-WAL-QEN', 'Natural Walnut', 'Queen (160x200)', 21500000, NULL, 4, 'assets/images/platform-bed.jpg'),
+(10, 'BED-HEL-10-WAL-KNG', 'Natural Walnut', 'King (180x200)', 23500000, NULL, 5, 'assets/images/platform-bed.jpg'),
+(10, 'BED-HEL-10-WAL-SKN', 'Natural Walnut', 'Super King (200x220)', 27000000, NULL, 2, 'assets/images/platform-bed.jpg'),
+(10, 'BED-HEL-10-ASH-QEN', 'Smoked Ash', 'Queen (160x200)', 20500000, NULL, 3, 'assets/images/platform-bed.jpg'),
+(10, 'BED-HEL-10-ASH-KNG', 'Smoked Ash', 'King (180x200)', 22500000, NULL, 4, 'assets/images/platform-bed.jpg'),
+(10, 'BED-HEL-10-ASH-SKN', 'Smoked Ash', 'Super King (200x220)', 26000000, NULL, 2, 'assets/images/platform-bed.jpg'),
+(11, 'DEC-PLN-11-WHT-SML', 'Sand White', 'Size S (Cao 18cm)', 850000, NULL, 20, 'assets/images/ceramic-vase.jpg'),
+(11, 'DEC-PLN-11-WHT-MED', 'Sand White', 'Size M (Cao 25cm)', 1200000, NULL, 25, 'assets/images/ceramic-vase.jpg'),
+(11, 'DEC-PLN-11-WHT-LRG', 'Sand White', 'Size L (Cao 35cm)', 1800000, NULL, 15, 'assets/images/ceramic-vase.jpg'),
+(11, 'DEC-PLN-11-GRY-SML', 'Basalt Grey', 'Size S (Cao 18cm)', 850000, NULL, 18, 'assets/images/ceramic-vase.jpg'),
+(11, 'DEC-PLN-11-GRY-MED', 'Basalt Grey', 'Size M (Cao 25cm)', 1200000, NULL, 22, 'assets/images/ceramic-vase.jpg'),
+(11, 'DEC-PLN-11-GRY-LRG', 'Basalt Grey', 'Size L (Cao 35cm)', 1800000, NULL, 12, 'assets/images/ceramic-vase.jpg'),
+(11, 'DEC-PLN-11-TER-SML', 'Terracotta', 'Size S (Cao 18cm)', 850000, NULL, 15, 'assets/images/ceramic-vase.jpg'),
+(11, 'DEC-PLN-11-TER-MED', 'Terracotta', 'Size M (Cao 25cm)', 1200000, NULL, 18, 'assets/images/ceramic-vase.jpg'),
+(11, 'DEC-PLN-11-TER-LRG', 'Terracotta', 'Size L (Cao 35cm)', 1800000, NULL, 10, 'assets/images/ceramic-vase.jpg'),
+(12, 'LGT-AUR-12-AMB-SGL', 'Amber Glow', 'Đèn Đơn (Single)', 3500000, NULL, 15, 'assets/images/brass-lamp.jpg'),
+(12, 'LGT-AUR-12-AMB-CL3', 'Amber Glow', 'Bộ 3 Đèn Thả (Cluster 3-Drop)', 7500000, NULL, 8, 'assets/images/brass-lamp.jpg'),
+(12, 'LGT-AUR-12-AMB-CL5', 'Amber Glow', 'Bộ 5 Đèn Chùm (Cluster 5-Drop)', 11500000, NULL, 4, 'assets/images/brass-lamp.jpg'),
+(12, 'LGT-AUR-12-SMK-SGL', 'Smoke Grey', 'Đèn Đơn (Single)', 3500000, NULL, 12, 'assets/images/brass-lamp.jpg'),
+(12, 'LGT-AUR-12-SMK-CL3', 'Smoke Grey', 'Bộ 3 Đèn Thả (Cluster 3-Drop)', 7500000, NULL, 6, 'assets/images/brass-lamp.jpg'),
+(12, 'LGT-AUR-12-SMK-CL5', 'Smoke Grey', 'Bộ 5 Đèn Chùm (Cluster 5-Drop)', 11500000, NULL, 3, 'assets/images/brass-lamp.jpg'),
+(12, 'LGT-AUR-12-CRY-SGL', 'Clear Crystal', 'Đèn Đơn (Single)', 3500000, NULL, 10, 'assets/images/brass-lamp.jpg'),
+(12, 'LGT-AUR-12-CRY-CL3', 'Clear Crystal', 'Bộ 3 Đèn Thả (Cluster 3-Drop)', 7500000, NULL, 5, 'assets/images/brass-lamp.jpg'),
+(12, 'LGT-AUR-12-CRY-CL5', 'Clear Crystal', 'Bộ 5 Đèn Chùm (Cluster 5-Drop)', 11500000, NULL, 2, 'assets/images/brass-lamp.jpg'),
+(13, 'CHR-GNV-13-GRY-STD', 'Space Grey', 'Bản Tiêu Chuẩn (Standard)', 5800000, 4900000, 12, 'assets/images/accent-chair.jpg'),
+(13, 'CHR-GNV-13-GRY-FTR', 'Space Grey', 'Kèm Kê Chân Thư Giãn (Footrest Pro)', 6800000, 5750000, 8, 'assets/images/accent-chair.jpg'),
+(13, 'CHR-GNV-13-GRY-FUL', 'Space Grey', 'Bản Tựa Đầu 3D & Kê Chân (Full Option)', 7800000, 6600000, 5, 'assets/images/accent-chair.jpg'),
+(13, 'CHR-GNV-13-BLK-STD', 'Midnight Black', 'Bản Tiêu Chuẩn (Standard)', 5800000, 4900000, 10, 'assets/images/accent-chair.jpg'),
+(13, 'CHR-GNV-13-BLK-FTR', 'Midnight Black', 'Kèm Kê Chân Thư Giãn (Footrest Pro)', 6800000, 5750000, 7, 'assets/images/accent-chair.jpg'),
+(13, 'CHR-GNV-13-BLK-FUL', 'Midnight Black', 'Bản Tựa Đầu 3D & Kê Chân (Full Option)', 7800000, 6600000, 4, 'assets/images/accent-chair.jpg'),
+(13, 'CHR-GNV-13-WHT-STD', 'Platinum White', 'Bản Tiêu Chuẩn (Standard)', 6000000, 5100000, 8, 'assets/images/accent-chair.jpg'),
+(13, 'CHR-GNV-13-WHT-FTR', 'Platinum White', 'Kèm Kê Chân Thư Giãn (Footrest Pro)', 7000000, 5950000, 5, 'assets/images/accent-chair.jpg'),
+(13, 'CHR-GNV-13-WHT-FUL', 'Platinum White', 'Bản Tựa Đầu 3D & Kê Chân (Full Option)', 8000000, 6800000, 3, 'assets/images/accent-chair.jpg'),
+(14, 'TBL-ZUR-14-SOK-160', 'Smoked Oak', '160-220cm (6-8 ghế)', 24500000, NULL, 5, 'assets/images/dining-table.jpg'),
+(14, 'TBL-ZUR-14-SOK-180', 'Smoked Oak', '180-260cm (8-10 ghế)', 28500000, NULL, 4, 'assets/images/dining-table.jpg'),
+(14, 'TBL-ZUR-14-SOK-200', 'Smoked Oak', '200-300cm (10-12 ghế)', 33500000, NULL, 2, 'assets/images/dining-table.jpg'),
+(14, 'TBL-ZUR-14-WAL-160', 'Walnut', '160-220cm (6-8 ghế)', 25500000, NULL, 4, 'assets/images/dining-table.jpg'),
+(14, 'TBL-ZUR-14-WAL-180', 'Walnut', '180-260cm (8-10 ghế)', 29500000, NULL, 3, 'assets/images/dining-table.jpg'),
+(14, 'TBL-ZUR-14-WAL-200', 'Walnut', '200-300cm (10-12 ghế)', 34500000, NULL, 2, 'assets/images/dining-table.jpg'),
+(14, 'TBL-ZUR-14-WOK-160', 'White Oak', '160-220cm (6-8 ghế)', 24500000, NULL, 5, 'assets/images/dining-table.jpg'),
+(14, 'TBL-ZUR-14-WOK-180', 'White Oak', '180-260cm (8-10 ghế)', 28500000, NULL, 4, 'assets/images/dining-table.jpg'),
+(14, 'TBL-ZUR-14-WOK-200', 'White Oak', '200-300cm (10-12 ghế)', 33500000, NULL, 2, 'assets/images/dining-table.jpg'),
+(15, 'SOFA-SIE-15-BEI-D50', 'Champagne Beige', 'Size Nhỏ (Đường kính 50cm)', 3600000, NULL, 8, 'assets/images/hero-sofa.jpg'),
+(15, 'SOFA-SIE-15-BEI-D60', 'Champagne Beige', 'Size Tiêu Chuẩn (Đường kính 60cm)', 4500000, NULL, 12, 'assets/images/hero-sofa.jpg'),
+(15, 'SOFA-SIE-15-BEI-D80', 'Champagne Beige', 'Size Lớn (Đường kính 80cm)', 6200000, NULL, 5, 'assets/images/hero-sofa.jpg'),
+(15, 'SOFA-SIE-15-GRN-D50', 'Olive Green', 'Size Nhỏ (Đường kính 50cm)', 3600000, NULL, 6, 'assets/images/hero-sofa.jpg'),
+(15, 'SOFA-SIE-15-GRN-D60', 'Olive Green', 'Size Tiêu Chuẩn (Đường kính 60cm)', 4500000, NULL, 9, 'assets/images/hero-sofa.jpg'),
+(15, 'SOFA-SIE-15-GRN-D80', 'Olive Green', 'Size Lớn (Đường kính 80cm)', 6200000, NULL, 4, 'assets/images/hero-sofa.jpg'),
+(15, 'SOFA-SIE-15-GRY-D50', 'Slate Grey', 'Size Nhỏ (Đường kính 50cm)', 3600000, NULL, 7, 'assets/images/hero-sofa.jpg'),
+(15, 'SOFA-SIE-15-GRY-D60', 'Slate Grey', 'Size Tiêu Chuẩn (Đường kính 60cm)', 4500000, NULL, 10, 'assets/images/hero-sofa.jpg'),
+(15, 'SOFA-SIE-15-GRY-D80', 'Slate Grey', 'Size Lớn (Đường kính 80cm)', 6200000, NULL, 3, 'assets/images/hero-sofa.jpg'),
+(16, 'SOFA-LIL-16-CRM-160', 'Cream White', '160cm (Compact)', 16500000, NULL, 4, 'assets/images/hero-sofa.jpg'),
+(16, 'SOFA-LIL-16-CRM-180', 'Cream White', '180cm (Standard)', 19000000, NULL, 6, 'assets/images/hero-sofa.jpg'),
+(16, 'SOFA-LIL-16-CRM-210', 'Cream White', '210cm (Lounge Deluxe)', 23500000, NULL, 3, 'assets/images/hero-sofa.jpg'),
+(16, 'SOFA-LIL-16-OTM-160', 'Warm Oatmeal', '160cm (Compact)', 16500000, NULL, 3, 'assets/images/hero-sofa.jpg'),
+(16, 'SOFA-LIL-16-OTM-180', 'Warm Oatmeal', '180cm (Standard)', 19000000, NULL, 5, 'assets/images/hero-sofa.jpg'),
+(16, 'SOFA-LIL-16-OTM-210', 'Warm Oatmeal', '210cm (Lounge Deluxe)', 23500000, NULL, 2, 'assets/images/hero-sofa.jpg'),
+(16, 'SOFA-LIL-16-GRY-160', 'Ash Grey', '160cm (Compact)', 16500000, NULL, 3, 'assets/images/hero-sofa.jpg'),
+(16, 'SOFA-LIL-16-GRY-180', 'Ash Grey', '180cm (Standard)', 19000000, NULL, 4, 'assets/images/hero-sofa.jpg'),
+(16, 'SOFA-LIL-16-GRY-210', 'Ash Grey', '210cm (Lounge Deluxe)', 23500000, NULL, 2, 'assets/images/hero-sofa.jpg'),
+(17, 'LGT-REY-17-BLK-STD', 'Matte Black', 'Tiêu Chuẩn (Cao 45cm)', 2900000, NULL, 15, 'assets/images/brass-lamp.jpg'),
+(17, 'LGT-REY-17-BLK-LRG', 'Matte Black', 'Cỡ Lớn (Cao 60cm)', 3600000, NULL, 8, 'assets/images/brass-lamp.jpg'),
+(17, 'LGT-REY-17-CPR-STD', 'Brushed Copper', 'Tiêu Chuẩn (Cao 45cm)', 3100000, NULL, 10, 'assets/images/brass-lamp.jpg'),
+(17, 'LGT-REY-17-CPR-LRG', 'Brushed Copper', 'Cỡ Lớn (Cao 60cm)', 3800000, NULL, 6, 'assets/images/brass-lamp.jpg'),
+(17, 'LGT-REY-17-STL-STD', 'Industrial Steel', 'Tiêu Chuẩn (Cao 45cm)', 2900000, NULL, 12, 'assets/images/brass-lamp.jpg'),
+(17, 'LGT-REY-17-STL-LRG', 'Industrial Steel', 'Cỡ Lớn (Cao 60cm)', 3600000, NULL, 7, 'assets/images/brass-lamp.jpg'),
+(18, 'TBL-TUS-18-WHT-D40', 'Carrara White Marble', 'Đường kính 40cm (Cao 50cm)', 9500000, 6990000, 6, 'assets/images/dining-table.jpg'),
+(18, 'TBL-TUS-18-WHT-D50', 'Carrara White Marble', 'Đường kính 50cm (Cao 55cm)', 12000000, 8990000, 4, 'assets/images/dining-table.jpg'),
+(18, 'TBL-TUS-18-BLK-D40', 'Nero Marquina Black', 'Đường kính 40cm (Cao 50cm)', 9800000, 7290000, 5, 'assets/images/dining-table.jpg'),
+(18, 'TBL-TUS-18-BLK-D50', 'Nero Marquina Black', 'Đường kính 50cm (Cao 55cm)', 12500000, 9390000, 3, 'assets/images/dining-table.jpg'),
+(18, 'TBL-TUS-18-EMR-D40', 'Emerald Green Marble', 'Đường kính 40cm (Cao 50cm)', 10500000, 7890000, 4, 'assets/images/dining-table.jpg'),
+(18, 'TBL-TUS-18-EMR-D50', 'Emerald Green Marble', 'Đường kính 50cm (Cao 55cm)', 13500000, 9990000, 2, 'assets/images/dining-table.jpg'),
+(19, 'LGT-BDX-19-BRS-SGL', 'Aged Brass', 'Bóng Đơn (Single Light)', 1500000, NULL, 15, 'assets/images/brass-lamp.jpg'),
+(19, 'LGT-BDX-19-BRS-DBL', 'Aged Brass', 'Bóng Đôi (Double Light)', 2100000, NULL, 18, 'assets/images/brass-lamp.jpg'),
+(19, 'LGT-BDX-19-BRS-TPL', 'Aged Brass', 'Bóng Ba (Triple Light)', 2800000, NULL, 8, 'assets/images/brass-lamp.jpg'),
+(19, 'LGT-BDX-19-BLK-SGL', 'Matte Black', 'Bóng Đơn (Single Light)', 1500000, NULL, 12, 'assets/images/brass-lamp.jpg'),
+(19, 'LGT-BDX-19-BLK-DBL', 'Matte Black', 'Bóng Đôi (Double Light)', 2100000, NULL, 15, 'assets/images/brass-lamp.jpg'),
+(19, 'LGT-BDX-19-BLK-TPL', 'Matte Black', 'Bóng Ba (Triple Light)', 2800000, NULL, 6, 'assets/images/brass-lamp.jpg'),
+(19, 'LGT-BDX-19-RSG-SGL', 'Rose Gold', 'Bóng Đơn (Single Light)', 1600000, NULL, 10, 'assets/images/brass-lamp.jpg'),
+(19, 'LGT-BDX-19-RSG-DBL', 'Rose Gold', 'Bóng Đôi (Double Light)', 2200000, NULL, 12, 'assets/images/brass-lamp.jpg'),
+(19, 'LGT-BDX-19-RSG-TPL', 'Rose Gold', 'Bóng Ba (Triple Light)', 2900000, NULL, 5, 'assets/images/brass-lamp.jpg'),
+(20, 'DEC-KAN-20-GLD-50150', 'Brushed Gold Frame', '50x150cm', 3500000, NULL, 8, 'assets/images/ceramic-vase.jpg'),
+(20, 'DEC-KAN-20-GLD-60160', 'Brushed Gold Frame', '60x160cm', 4200000, NULL, 12, 'assets/images/ceramic-vase.jpg'),
+(20, 'DEC-KAN-20-GLD-80180', 'Brushed Gold Frame', '80x180cm (Toàn Thân Đại)', 5800000, NULL, 5, 'assets/images/ceramic-vase.jpg'),
+(20, 'DEC-KAN-20-BLK-50150', 'Matte Black Frame', '50x150cm', 3500000, NULL, 7, 'assets/images/ceramic-vase.jpg'),
+(20, 'DEC-KAN-20-BLK-60160', 'Matte Black Frame', '60x160cm', 4200000, NULL, 10, 'assets/images/ceramic-vase.jpg'),
+(20, 'DEC-KAN-20-BLK-80180', 'Matte Black Frame', '80x180cm (Toàn Thân Đại)', 5800000, NULL, 4, 'assets/images/ceramic-vase.jpg'),
+(20, 'DEC-KAN-20-OAK-50150', 'Natural Oak Frame', '50x150cm', 3700000, NULL, 6, 'assets/images/ceramic-vase.jpg'),
+(20, 'DEC-KAN-20-OAK-60160', 'Natural Oak Frame', '60x160cm', 4500000, NULL, 8, 'assets/images/ceramic-vase.jpg'),
+(20, 'DEC-KAN-20-OAK-80180', 'Natural Oak Frame', '80x180cm (Toàn Thân Đại)', 6200000, NULL, 3, 'assets/images/ceramic-vase.jpg');
 
--- SP 2: Aarhus Dining Table (3 màu x 3 size)
-(2, 'TBL-AAR-NOK-160', 'Natural Oak', '160x90cm', 16500000, NULL, 4, 'assets/images/dining-table.jpg'),
-(2, 'TBL-AAR-NOK-180', 'Natural Oak', '180x90cm', 18500000, NULL, 5, 'assets/images/dining-table.jpg'),
-(2, 'TBL-AAR-SOK-180', 'Smoked Oak', '180x90cm', 19500000, NULL, 2, 'assets/images/dining-table.jpg'),
-(2, 'TBL-AAR-WAL-210', 'Walnut', '210x100cm', 23000000, NULL, 1, 'assets/images/dining-table.jpg'),
-
--- SP 3: Bergen Lounge Armchair
-(3, 'CHR-BER-CAR-STD', 'Caramel Tan', 'Standard', 12500000, 8900000, 5, 'assets/images/accent-chair.jpg'),
-(3, 'CHR-BER-CAR-OTM', 'Caramel Tan', 'With Ottoman', 16500000, 12900000, 3, 'assets/images/accent-chair.jpg'),
-(3, 'CHR-BER-ESP-STD', 'Espresso', 'Standard', 12500000, 8900000, 2, 'assets/images/accent-chair.jpg'),
-
--- SP 4: Koppar Brass Floor Lamp
-(4, 'LGT-KOP-BRS-180', 'Brushed Brass', '180cm Height', 6800000, 5440000, 12, 'assets/images/brass-lamp.jpg'),
-(4, 'LGT-KOP-BRS-210', 'Brushed Brass', '210cm Height', 7800000, 6240000, 5, 'assets/images/brass-lamp.jpg'),
-(4, 'LGT-KOP-BLK-180', 'Matte Black', '180cm Height', 6500000, 5200000, 3, 'assets/images/brass-lamp.jpg'),
-
--- SP 5: Oslo Platform Bed
-(5, 'BED-OSL-BEI-QEN', 'Oatmeal Beige', 'Queen (160x200)', 24000000, NULL, 3, 'assets/images/platform-bed.jpg'),
-(5, 'BED-OSL-BEI-KNG', 'Oatmeal Beige', 'King (180x200)', 26000000, NULL, 2, 'assets/images/platform-bed.jpg'),
-(5, 'BED-OSL-GRY-KNG', 'Slate Grey', 'King (180x200)', 26000000, NULL, 1, 'assets/images/platform-bed.jpg'),
-
--- SP 7: Stockholm Velvet Chair
-(7, 'CHR-STK-EMR-STD', 'Emerald Green', 'Standard', 7200000, 6480000, 8, 'assets/images/accent-chair.jpg'),
-(7, 'CHR-STK-BLU-STD', 'Midnight Blue', 'Standard', 7200000, 6480000, 6, 'assets/images/accent-chair.jpg'),
-
--- SP 9: Copenhagen Leather Sofa
-(9, 'SOFA-CPH-COG-220', 'Cognac Brown', '220cm', 38000000, NULL, 3, 'assets/images/hero-sofa.jpg'),
-(9, 'SOFA-CPH-BLK-220', 'Black Onyx', '220cm', 38000000, NULL, 2, 'assets/images/hero-sofa.jpg'),
-
--- SP 12: Aura Amber Glass Lamp
-(12, 'LGT-AUR-AMB-SGL', 'Amber Glow', 'Single', 3500000, NULL, 15, 'assets/images/brass-lamp.jpg'),
-(12, 'LGT-AUR-AMB-CL3', 'Amber Glow', 'Cluster 3-Drop', 8500000, NULL, 7, 'assets/images/brass-lamp.jpg');
-
--- 6. Chèn mã giảm giá
-INSERT INTO `coupons` (`id`, `code`, `discount_type`, `discount_value`, `min_order_amount`, `max_discount_amount`, `usage_limit`, `times_used`, `is_active`) VALUES
-(1, 'WOODLUXE10', 'percentage', 10.00, 5000000.00, 5000000.00, 1000, 12, 1),
-(2, 'FREESHIP', 'free_shipping', 0.00, 10000000.00, 0.00, 500, 35, 1);
-
--- 7. Chèn đơn hàng mẫu hoàn thành (Đơn của Trần Hoàng Nam mua Reddington Sofa)
-INSERT INTO `orders` (`id`, `order_code`, `user_id`, `customer_name`, `customer_phone`, `customer_email`, `shipping_address`, `shipping_city`, `payment_method`, `payment_status`, `order_status`, `subtotal`, `discount_amount`, `coupon_code`, `shipping_fee`, `total_amount`, `created_at`) VALUES
-(1, 'WLX-20261026-8892', 2, 'Trần Hoàng Nam', '0901 234 567', 'nam.nguyen@woodluxe.vn', 'Penthouse B12, Thảo Điền, Quận 2', 'TP. Hồ Chí Minh', 'COD', 'paid', 'completed', 28500000.00, 0.00, NULL, 0.00, 28500000.00, '2026-10-26 14:30:00');
-
--- 8. Chi tiết đơn hàng mẫu
-INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `variation_id`, `product_name`, `product_sku`, `color`, `size`, `unit_price`, `quantity`, `subtotal`) VALUES
-(1, 1, 1, 1, 'Reddington Modular Living Room Sofa', 'SOFA-RED-CRM-3S', 'Cream', 'Standard (3-Seater)', 28500000.00, 1, 28500000.00);
-
--- 9. Đánh giá sản phẩm đã xác thực mua hàng (Verified Purchase cho SP 1)
-INSERT INTO `reviews` (`id`, `product_id`, `user_id`, `order_id`, `rating_score`, `review_title`, `comment`, `is_verified_purchase`, `status`, `created_at`) VALUES
-(1, 1, 2, 1, 5, 'Chất lượng da và nỉ vượt trội so với tầm giá', 'Bộ sofa module Reddington đặt vào phòng khách penthouse tạo hiệu ứng thị giác tuyệt vời. Đệm mút D40 êm ái đàn hồi chuẩn mực, đường may bouclé tinh xảo đến từng milimet.', 1, 'approved', '2026-10-27 10:15:00');
-
--- 10. Chuyên mục blog
-INSERT INTO `blog_categories` (`id`, `name`, `slug`, `description`, `display_order`) VALUES
-(1, 'Interior Design', 'interior-design', 'Nghệ thuật bài trí không gian & kiến trúc đương đại', 1),
-(2, 'Material & Craft', 'material-craft', 'Bảo tồn chất liệu gỗ tự nhiên & chế tác da thủ công', 2),
-(3, 'Smart Living', 'smart-living', 'Giải pháp công thái học & không gian sống thông minh', 3);
-
--- 11. Chèn 6 bài viết blog từ docs/dataset/blog.csv
-INSERT INTO `blog_posts` (`id`, `category_id`, `title`, `slug`, `author`, `summary`, `content`, `image_url`, `reading_time`, `published_date`, `views_count`, `status`) VALUES
-(1, 1, 'Nghệ thuật bài trí phòng khách tối giản xu hướng 2026', 'nghe-thuat-bai-tri-phong-khach-2026', 'Elena Vance', 'Khám phá cách phối màu trung tính, bố cục sofa module và luồng sáng tự nhiên để tạo không gian mở đẳng cấp.', 'Nghệ thuật tối giản (Minimalism) trong nội thất hiện đại không đơn thuần là bớt đồ đạc, mà là tinh chọn từng món đồ đạt độ hoàn thiện cao nhất. Khi sắp đặt sofa Reddington tại trung tâm phòng khách, hãy chú ý hướng ánh sáng từ ban công hoặc cửa kính lửng. Kết hợp cùng bàn trà gỗ sồi Malmo tạo nên sự đối thoại cân bằng giữa chất liệu vải dệt mềm mại và vân gỗ tự nhiên mộc mạc.', 'assets/images/hero-sofa.jpg', '5 phút', '2026-10-15', 342, 'published'),
-(2, 2, 'Bí quyết chọn bàn ăn gỗ tự nhiên cho căn hộ hiện đại', 'bi-quyet-chon-ban-an-go-tu-nhien', 'Marcus Lindberg', 'Phân biệt giữa gỗ sồi trắng châu Âu, óc chó Bắc Mỹ và cách bảo dưỡng để giữ vân gỗ luôn sáng bóng.', 'Bàn ăn là trái tim của gian bếp ấm cúng. Với dòng bàn Aarhus Scandinavian từ gỗ sồi thịt, bạn sẽ cảm nhận được độ lì đầm và đường vân uốn lượn mềm mại. Lớp sơn dầu gốc thực vật không chứa VOC bảo đảm an toàn thực phẩm cho gia đình có trẻ nhỏ, đồng thời giữ cho bề mặt gỗ thở tự nhiên theo chu kỳ thời tiết 4 mùa tại Việt Nam.', 'assets/images/dining-table.jpg', '7 phút', '2026-10-18', 215, 'published'),
-(3, 1, 'Định hình ánh sáng đa tầng: Giải pháp nâng tầm không gian sống', 'dinh-hinh-anh-sang-da-tang-lighting', 'Elena Vance', 'Cách phối hợp giữa ánh sáng chung, ánh sáng tác vụ và đèn điểm nhấn nghệ thuật trong phòng khách.', 'Ánh sáng là linh hồn của thiết kế nội thất. Thay vì chỉ dùng đèn âm trần phẳng tẻ nhạt, một cây đèn vòm cong Koppar bằng đồng thau đặt cạnh góc ghế sofa tạo ra vùng sáng ấm cúng tập trung khi đọc sách ban tối. Khi phối thêm đèn treo chùm thủy tinh hổ phách Aura trên bàn ăn, bạn đã biến ngôi nhà thành một khách sạn boutique sang trọng.', 'assets/images/brass-lamp.jpg', '6 phút', '2026-10-20', 188, 'published'),
-(4, 1, 'Japandi & Wabi Sabi: Vẻ đẹp của sự mộc mạc và tĩnh lặng', 'japandi-wabi-sabi-phong-cach-noi-that', 'Kenji Sato', 'Sự giao thoa hoàn mỹ giữa nét thanh lịch của Bắc Âu và triết lý trân quý sự không hoàn hảo từ Nhật Bản.', 'Phong cách Japandi là điểm hẹn giữa sự thực dụng tối giản của Scandinavia và mỹ học Wabi-Sabi tôn vinh thời gian của Nhật Bản. Những chiếc bình gốm thô Kyoto với men mờ tự nhiên mang đến vẻ đẹp điềm đạm. Đặt một nhành bạch đàn hoặc hoa khô đơn độc sẽ khơi gợi cảm giác thanh tịnh bất tận cho góc làm việc của bạn.', 'assets/images/ceramic-vase.jpg', '8 phút', '2026-10-21', 405, 'published'),
-(5, 3, 'Tối ưu hóa giấc ngủ với giường ngủ công thái học và nỉ Bouclé', 'toi-uu-giac-ngu-voi-giuong-ngu-boucle', 'Dr. Clara Dupont', 'Cấu trúc khung giường thấp, khả năng thoáng khí và bề mặt vải len hạt nâng niu giấc ngủ sâu.', 'Một phần ba đời người dành cho giấc ngủ. Giường platform Oslo King Bed được tính toán độ cao tiêu chuẩn 35cm từ mặt sàn giúp cơ thể tiếp đất tự nhiên. Lớp đệm bọc vải bouclé dệt mật độ cao chống bám bụi và hỗ trợ lưu thông không khí, giữ nhiệt độ lý tưởng cho phòng ngủ quanh năm.', 'assets/images/platform-bed.jpg', '5 phút', '2026-10-23', 290, 'published'),
-(6, 2, 'Hướng dẫn chăm sóc và làm mới nội thất da bò Ý thủ công', 'huong-dan-cham-soc-noi-that-da-bo-y', 'Marcus Lindberg', 'Các bước dưỡng ẩm da, tránh nứt nẻ và làm sạch vết ố cho ghế thư giãn Bergen da thuộc tự nhiên.', 'Da thật là chất liệu có thể "già đi" một cách duyên dáng theo năm tháng (patina). Để giữ cho chiếc ghế Bergen luôn mềm mịn như nhung, hãy lau sạch bằng khăn ẩm vắt kiệt mỗi tuần và thoa sáp dưỡng chiết xuất sáp ong 6 tháng một lần. Tránh đặt da dưới ánh nắng trực tiếp của cửa sổ mà không có rèm che.', 'assets/images/accent-chair.jpg', '4 phút', '2026-10-25', 312, 'published');
-
--- 12. Danh sách sản phẩm yêu thích mẫu
-INSERT INTO `wishlists` (`user_id`, `product_id`) VALUES
-(2, 1),
-(2, 3),
-(3, 5);
 
 -- ============================================================================
 -- KẾT THÚC KHỞI TẠO CƠ SỞ DỮ LIỆU WOODLUXE

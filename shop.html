@@ -33,18 +33,18 @@
     <div class="container">
       <div class="top-notice-left">
         <span><i class="fa-solid fa-phone-volume"></i> Hotline tư vấn: <strong>1900 6868</strong></span>
-        <span><i class="fa-solid fa-location-dot"></i> Showroom: <strong>Quận 1, TP. Hồ Chí Minh</strong></span>
+        <span><i class="fa-solid fa-location-dot"></i> Showroom: <strong>Trâu Quỳ, Gia Lâm</strong></span>
         <span><i class="fa-solid fa-truck-fast"></i> Giao hàng & Lắp đặt miễn phí đơn từ 10.000.000₫</span>
       </div>
       <div class="top-notice-right">
         <div style="display: flex; align-items: center; gap: 4px;">
           <i class="fa-solid fa-coins" style="color: var(--color-accent-amber);"></i>
-          <select id="currency-selector" onchange="alert('Hệ thống hiện cố định giá hiển thị chuẩn VNĐ.')">
+          <select id="currency-selector" onchange="changeCurrency(this.value)">
             <option value="VND">VNĐ (Việt Nam)</option>
             <option value="USD">USD ($)</option>
           </select>
         </div>
-        <span><i class="fa-solid fa-headset"></i> Hỗ trợ khách hàng</span>
+        <a href="javascript:void(0)" onclick="openSupportModal()" class="top-notice-support-btn" style="color: inherit; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-headset"></i> Hỗ trợ khách hàng</a>
         <a href="javascript:void(0)" onclick="openOrderTrackingModal()" class="top-notice-track-btn" style="color: inherit; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-truck-fast"></i> Theo dõi đơn hàng</a>
       </div>
     </div>
@@ -419,7 +419,7 @@
                 <input type="checkbox" checked /> Ghi nhớ đăng nhập
               </label>
               <a href="javascript:void(0)"
-                onclick="alert('Tính năng khôi phục mật khẩu qua SMS OTP đang được kích hoạt.')"
+                onclick="showCustomAlertPopup('Tính năng khôi phục mật khẩu qua SMS OTP đang được kết nối tổng đài.', 'Khôi Phục Mật Khẩu', 'info')"
                 style="color: var(--color-accent-amber); font-weight: 600;">Quên mật khẩu?</a>
             </div>
 
@@ -564,40 +564,77 @@
     </div>
   </div>
 
-  <div id="test-runner-modal" class="modal-overlay">
-    <div class="modal-card test-modal-card">
-      <button class="modal-close-btn" onclick="closeTestRunnerModal()" title="Đóng">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-      <h2
-        style="font-size: 20px; font-weight: 800; color: var(--color-primary-navy); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
-        <i class="fa-solid fa-bolt" style="color: var(--color-accent-amber);"></i>
-        <span>BỘ KIỂM THỬ CHẤT LƯỢNG HỆ THỐNG (20 TEST CASES)</span>
-      </h2>
-      <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 16px;">Tự động kiểm chứng toàn bộ 20
-        kịch bản kiểm thử quy định trong đề bài và kế hoạch triển khai.</p>
-
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <button class="btn-primary" onclick="runAllAcceptanceTests()">
-          <i class="fa-solid fa-circle-play"></i>
-          <span>CHẠY KIỂM THỬ TỰ ĐỘNG</span>
+    <!-- Consultation Booking Modal -->
+  <div id="consultation-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 580px; padding: 0; overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+      <div style="background: var(--color-primary-navy); padding: 24px 30px; color: #fff; position: relative;">
+        <button class="modal-close-btn" onclick="closeConsultationModal()" title="Đóng" style="color: #fff; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+          <i class="fa-solid fa-xmark"></i>
         </button>
-        <span id="test-runner-progress" style="font-size: 13px; font-weight: 700;">Nhấn nút để chạy kiểm thử...</span>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+          <div style="width: 42px; height: 42px; border-radius: 8px; background: rgba(217, 119, 6, 0.2); display: flex; align-items: center; justify-content: center; color: var(--color-accent-amber); font-size: 20px;">
+            <i class="fa-solid fa-compass-drafting"></i>
+          </div>
+          <div>
+            <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--color-accent-amber); font-weight: 800;">Dịch Vụ Thiết Kế Nội Thất</span>
+            <h3 style="font-size: 20px; font-weight: 800; margin: 0; color: #fff;">Đăng Ký Tư Vấn Không Gian Sống</h3>
+          </div>
+        </div>
+        <p style="font-size: 13px; color: #94a3b8; margin: 0; line-height: 1.5;">Đội ngũ kiến trúc sư WOODLUXE sẽ liên hệ tư vấn bản vẽ 3D và giải pháp bố trí tối ưu trong vòng 15 phút.</p>
       </div>
 
-      <div style="max-height: 400px; overflow-y: auto;">
-        <table class="test-results-table">
-          <thead>
-            <tr>
-              <th style="width: 70px;">Mã TC</th>
-              <th>Kịch bản Kiểm thử</th>
-              <th style="width: 90px;">Kết quả</th>
-              <th>Chi tiết</th>
-            </tr>
-          </thead>
-          <tbody id="test-runner-tbody"></tbody>
-        </table>
-      </div>
+      <form id="consultation-form" onsubmit="handleConsultationSubmit(event)" style="padding: 24px 30px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--color-primary-navy);">Họ và tên *</label>
+            <input type="text" id="consult-name" required placeholder="Ví dụ: Nguyễn Văn Nam" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--color-primary-navy);">Số điện thoại *</label>
+            <input type="tel" id="consult-phone" required placeholder="09xx xxx xxx" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--color-primary-navy);">Địa chỉ Email</label>
+          <input type="email" id="consult-email" placeholder="email@example.com" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; box-sizing: border-box;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--color-primary-navy);">Hạng mục cần tư vấn</label>
+            <select id="consult-category" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: #fff; box-sizing: border-box;">
+              <option value="Tư vấn căn hộ trọn gói">Căn hộ trọn gói</option>
+              <option value="Sofa & Phòng khách">Sofa & Phòng khách</option>
+              <option value="Bàn ăn & Bếp">Bàn ăn & Bếp</option>
+              <option value="Giường ngủ & Phòng ngủ">Giường ngủ & Phòng ngủ</option>
+              <option value="Đóng theo kích thước riêng">Đóng theo kích thước riêng</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--color-primary-navy);">Phong cách quan tâm</label>
+            <select id="consult-style" style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; background: #fff; box-sizing: border-box;">
+              <option value="Scandinavian (Bắc Âu)">Scandinavian (Bắc Âu)</option>
+              <option value="Modern Luxury (Hiện đại sang trọng)">Modern Luxury (Hiện đại)</option>
+              <option value="Japandi mộc mạc">Japandi mộc mạc</option>
+              <option value="Minimalism (Tối giản)">Minimalism (Tối giản)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--color-primary-navy);">Ghi chú thêm / Diện tích không gian</label>
+          <textarea id="consult-notes" rows="3" placeholder="Ví dụ: Căn hộ 85m2 chung cư Ocean Park, cần tư vấn sofa và bàn ăn gỗ sồi..." style="width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; resize: vertical; box-sizing: border-box;"></textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 6px;">
+          <button type="button" onclick="closeConsultationModal()" style="padding: 10px 18px; border: 1px solid #cbd5e1; background: #f1f5f9; border-radius: 6px; font-weight: 600; cursor: pointer; color: #475569;">Đóng</button>
+          <button type="submit" class="btn-primary" style="padding: 10px 24px; border-radius: 6px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>GỬI YÊU CẦU TƯ VẤN</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -647,8 +684,7 @@
                 trong vòng 30 ngày</a></li>
             <li><a href="javascript:void(0)"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i> Hướng
                 dẫn chăm sóc gỗ & da</a></li>
-            <li><a href="javascript:void(0)" onclick="openTestRunnerModal()"><i class="fa-solid fa-chevron-right"
-                  style="font-size: 10px;"></i> Báo cáo kiểm thử chất lượng</a></li>
+            <li><a href="javascript:void(0)" onclick="openConsultationModal()"><i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i> Đăng ký tư vấn thiết kế 3D</a></li>
           </ul>
         </div>
 
@@ -659,7 +695,7 @@
             <input type="email" placeholder="Email của bạn..." class="form-control"
               style="background: #142238; border-color: #22344d; color: #fff;" />
             <button class="btn-primary" style="padding: 10px 16px;"
-              onclick="alert('Đăng ký thành công! Mã ưu đãi của bạn: WOODLUXE10')">
+              onclick="showCustomAlertPopup('Đăng ký nhận bản tin thành công! Mã ưu đãi của bạn: WOODLUXE10 (-10% đơn hàng)', 'Ưu Đãi Đăng Ký', 'success')">
               <i class="fa-solid fa-paper-plane"></i>
               <span>GỬI</span>
             </button>

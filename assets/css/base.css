@@ -125,3 +125,121 @@ input, select, textarea {
   color: var(--color-primary-navy);
   transform: translateY(-2px);
 }
+
+/* ==========================================================================
+   CUSTOM POPUP & MODAL SYSTEM (ALERT, CONFIRM, SUPPORT, TRACKING)
+   ========================================================================== */
+.custom-alert-overlay,
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.custom-alert-overlay.active,
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-overlay .modal-card {
+  transform: scale(0.94) translateY(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1) translateY(0);
+}
+
+.custom-alert-card {
+  background: #ffffff;
+  border-radius: 16px;
+  max-width: 440px;
+  width: 100%;
+  padding: 32px 28px 24px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  transform: scale(0.92) translateY(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.custom-alert-overlay.active .custom-alert-card {
+  transform: scale(1) translateY(0);
+}
+
+.custom-alert-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+
+.custom-alert-icon.success {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.custom-alert-icon.warning {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.custom-alert-icon.error {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.custom-alert-icon.info {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.custom-alert-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--color-primary-navy);
+  margin-bottom: 8px;
+}
+
+.custom-alert-message {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  word-break: break-word;
+}
+
+.custom-alert-btn {
+  width: 100%;
+  padding: 12px 24px;
+  background: var(--color-accent-amber);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
+}
+
+.custom-alert-btn:hover {
+  background: #b45309;
+  transform: translateY(-1px);
+}
